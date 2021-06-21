@@ -109,9 +109,9 @@ namespace VVVF {
                 var pwm_v = carrier < v ? 1 : -1;
                 var pwm_w = carrier < w ? 1 : -1;
 
-                mFu = mFu * 0.98 + pwm_u * 0.02;
-                mFv = mFv * 0.98 + pwm_v * 0.02;
-                mFw = mFw * 0.98 + pwm_w * 0.02;
+                mFu = mFu * 0.99 + pwm_u * 0.01;
+                mFv = mFv * 0.99 + pwm_v * 0.01;
+                mFw = mFw * 0.99 + pwm_w * 0.01;
 
                 if (ScopeA.Length <= mScopeIndex) {
                     if (DisplayMode == EDisplayMode.PHASE || mTime < 0.02) {
@@ -187,15 +187,6 @@ namespace VVVF {
             } else {
                 mPulseMode = 3;
             }
-
-            //if (CurrentFreq < 60) {
-            //    CarrierFreq = (1200 - 480 * CurrentFreq / 60) + (500 - 440 * CurrentFreq / 60) * (2.0 * mRnd.NextDouble() - 1.0);
-            //    mPulseMode = 0;
-            //    return;
-            //}
-
-            //var pulseMode = mPulseMode;
-            //mPulseMode = 3;
 
             if (pulseMode != mPulseMode) {
                 mCarrierTime = mTime * mPulseMode;
