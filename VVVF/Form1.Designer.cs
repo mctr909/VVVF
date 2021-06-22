@@ -38,6 +38,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.trbPower = new System.Windows.Forms.TrackBar();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.trbFilter = new System.Windows.Forms.TrackBar();
+            this.label9 = new System.Windows.Forms.Label();
             this.cmbDisplayMode = new System.Windows.Forms.ComboBox();
             this.picWave = new System.Windows.Forms.PictureBox();
             this.lblCarrierFreq = new System.Windows.Forms.Label();
@@ -56,6 +58,7 @@
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trbPower)).BeginInit();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trbFilter)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picWave)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trbVolume)).BeginInit();
             this.groupBox3.SuspendLayout();
@@ -97,6 +100,7 @@
             this.trbTargetFreq.Size = new System.Drawing.Size(200, 45);
             this.trbTargetFreq.TabIndex = 3;
             this.trbTargetFreq.TickFrequency = 10;
+            this.trbTargetFreq.Value = 120;
             this.trbTargetFreq.Scroll += new System.EventHandler(this.trackBar1_Scroll);
             // 
             // trbAcc
@@ -107,6 +111,7 @@
             this.trbAcc.Size = new System.Drawing.Size(200, 45);
             this.trbAcc.TabIndex = 4;
             this.trbAcc.TickFrequency = 10;
+            this.trbAcc.Value = 50;
             this.trbAcc.Scroll += new System.EventHandler(this.trbAcc_Scroll);
             // 
             // lblTargetFreq
@@ -200,6 +205,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.trbFilter);
+            this.groupBox2.Controls.Add(this.label9);
             this.groupBox2.Controls.Add(this.cmbDisplayMode);
             this.groupBox2.Controls.Add(this.picWave);
             this.groupBox2.Controls.Add(this.lblCarrierFreq);
@@ -210,10 +217,31 @@
             this.groupBox2.Controls.Add(this.lblOutputFreq);
             this.groupBox2.Location = new System.Drawing.Point(320, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(332, 224);
+            this.groupBox2.Size = new System.Drawing.Size(332, 379);
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "モニター";
+            // 
+            // trbFilter
+            // 
+            this.trbFilter.Location = new System.Drawing.Point(6, 77);
+            this.trbFilter.Maximum = 0;
+            this.trbFilter.Minimum = -60;
+            this.trbFilter.Name = "trbFilter";
+            this.trbFilter.Size = new System.Drawing.Size(320, 45);
+            this.trbFilter.TabIndex = 16;
+            this.trbFilter.TickFrequency = 6;
+            this.trbFilter.Value = -24;
+            this.trbFilter.Scroll += new System.EventHandler(this.trbFilter_Scroll);
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(6, 62);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(48, 12);
+            this.label9.TabIndex = 15;
+            this.label9.Text = "フィルター";
             // 
             // cmbDisplayMode
             // 
@@ -231,9 +259,9 @@
             // picWave
             // 
             this.picWave.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picWave.Location = new System.Drawing.Point(6, 49);
+            this.picWave.Location = new System.Drawing.Point(6, 128);
             this.picWave.Name = "picWave";
-            this.picWave.Size = new System.Drawing.Size(320, 168);
+            this.picWave.Size = new System.Drawing.Size(320, 245);
             this.picWave.TabIndex = 6;
             this.picWave.TabStop = false;
             // 
@@ -350,6 +378,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.trbPower)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.trbFilter)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picWave)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trbVolume)).EndInit();
             this.groupBox3.ResumeLayout(false);
@@ -387,6 +416,8 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.ComboBox cmbDisplayMode;
         private System.Windows.Forms.ColorDialog colorDialog1;
+        private System.Windows.Forms.TrackBar trbFilter;
+        private System.Windows.Forms.Label label9;
     }
 }
 

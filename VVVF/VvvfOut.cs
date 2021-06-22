@@ -24,6 +24,7 @@ namespace VVVF {
         public EDisplayMode DisplayMode;
         public double[] ScopeA;
         public double[] ScopeB;
+        public double Filter = 1 / 16.0;
 
         private Random mRnd = new Random();
 
@@ -109,9 +110,9 @@ namespace VVVF {
                 var pwm_v = carrier < v ? 1 : -1;
                 var pwm_w = carrier < w ? 1 : -1;
 
-                mFu = mFu * 0.99 + pwm_u * 0.01;
-                mFv = mFv * 0.99 + pwm_v * 0.01;
-                mFw = mFw * 0.99 + pwm_w * 0.01;
+                mFu = mFu * (1.0 - Filter) + pwm_u * Filter;
+                mFv = mFv * (1.0 - Filter) + pwm_v * Filter;
+                mFw = mFw * (1.0 - Filter) + pwm_w * Filter;
 
                 if (ScopeA.Length <= mScopeIndex) {
                     if (DisplayMode == EDisplayMode.PHASE || mTime < 0.02) {
@@ -122,11 +123,11 @@ namespace VVVF {
                 if (mScopeIndex < ScopeA.Length) {
                     switch (DisplayMode) {
                     case EDisplayMode.U_V:
-                        ScopeA[mScopeIndex] = (pwm_u - pwm_v) / 2.0;
+                        ScopeA[mScopeIndex] = (mFu - mFv) / 1.732;
                         ScopeB[mScopeIndex] = (u - v) / 1.732;
                         break;
                     case EDisplayMode.U:
-                        ScopeA[mScopeIndex] = pwm_u;
+                        ScopeA[mScopeIndex] = mFu;
                         ScopeB[mScopeIndex] = u;
                         break;
                     case EDisplayMode.PHASE:
@@ -139,12 +140,12 @@ namespace VVVF {
 
                 switch (DisplayMode) {
                 case EDisplayMode.U_V:
-                    WaveBuffer[i] = (short)(32767 * Volume * (pwm_u - pwm_v));
-                    WaveBuffer[i + 1] = (short)(32767 * Volume * (pwm_v - pwm_w));
+                    WaveBuffer[i] = (short)(32767 * Volume * (mFu - mFv));
+                    WaveBuffer[i + 1] = (short)(32767 * Volume * (mFv - mFw));
                     break;
                 case EDisplayMode.U:
-                    WaveBuffer[i] = (short)(32767 * Volume * pwm_u);
-                    WaveBuffer[i + 1] = (short)(32767 * Volume * pwm_v);
+                    WaveBuffer[i] = (short)(32767 * Volume * mFu);
+                    WaveBuffer[i + 1] = (short)(32767 * Volume * mFv);
                     break;
                 case EDisplayMode.PHASE:
                     WaveBuffer[i] = (short)(32767 * Volume * (2 * mFu / 3.0 - mFv / 3.0 - mFw / 3.0));
@@ -155,38 +156,47 @@ namespace VVVF {
         }
 
         private void updateFreq() {
-            if (CurrentFreq < 8) {
-                var oct = Note[(int)CurrentFreq] / 12.0;
-                CarrierFreq = 200 * Math.Pow(2.0, oct);
-                mPulseMode = 0;
-                return;
-            }
+            //if (CurrentFreq < 5) {
+            //    var oct = Note[(int)(CurrentFreq * 8 / 5)] / 12.0;
+            //    CarrierFreq = 200 * Math.Pow(2.0, oct);
+            //    mPulseMode = 0;
+            //    return;
+            //}
 
-            if (CurrentFreq < 24) {
-                CarrierFreq = 400;
+            //if (CurrentFreq < 24) {
+            //    CarrierFreq = 400;
+            //    mPulseMode = 0;
+            //    return;
+            //}
+
+            //var pulseMode = mPulseMode;
+
+            //if (CurrentFreq < 26) {
+            //    mPulseMode = 15;
+            //} else if (CurrentFreq < 30) {
+            //    mPulseMode = 13;
+            //} else if (CurrentFreq < 35) {
+            //    mPulseMode = 11;
+            //} else if (CurrentFreq < 43) {
+            //    mPulseMode = 9;
+            //} else if (CurrentFreq < 56) {
+            //    mPulseMode = 7;
+            //} else if (CurrentFreq < 58) {
+            //    mPulseMode = 5;
+            //} else if (CurrentFreq < 80) {
+            //    mPulseMode = 3;
+            //} else {
+            //    mPulseMode = 3;
+            //}
+
+            if (CurrentFreq < 60) {
+                CarrierFreq = (2000 - 1280 * CurrentFreq / 60) + (1000 - 970 * CurrentFreq / 60) * (2.0 * mRnd.NextDouble() - 1.0);
                 mPulseMode = 0;
                 return;
             }
 
             var pulseMode = mPulseMode;
-
-            if (CurrentFreq < 26) {
-                mPulseMode = 15;
-            } else if (CurrentFreq < 30) {
-                mPulseMode = 13;
-            } else if (CurrentFreq < 35) {
-                mPulseMode = 11;
-            } else if (CurrentFreq < 43) {
-                mPulseMode = 9;
-            } else if (CurrentFreq < 56) {
-                mPulseMode = 7;
-            } else if (CurrentFreq < 58) {
-                mPulseMode = 5;
-            } else if (CurrentFreq < 80) {
-                mPulseMode = 3;
-            } else {
-                mPulseMode = 3;
-            }
+            mPulseMode = 3;
 
             if (pulseMode != mPulseMode) {
                 mCarrierTime = mTime * mPulseMode;

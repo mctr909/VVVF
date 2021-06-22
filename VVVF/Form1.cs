@@ -23,6 +23,14 @@ namespace VVVF {
             mWaveOut.Open(0xFFFFFFFF);
             mWaveGraph = new DoubleBufferGraphic(picWave, null);
             cmbDisplayMode.SelectedIndex = 0;
+
+            btnPlayStop_Click(null, null);
+            trbVolume_Scroll(null, null);
+            trackBar1_Scroll(null, null);
+            trbAcc_Scroll(null, null);
+            trbPower_Scroll(null, null);
+            trbFilter_Scroll(null, null);
+
             timer1.Interval = 10;
             timer1.Start();
         }
@@ -63,6 +71,10 @@ namespace VVVF {
         private void trbPower_Scroll(object sender, EventArgs e) {
             mWaveOut.TargetPower = trbPower.Value * 0.01;
             lblPower.Text = string.Format("{0}%", trbPower.Value.ToString("000"));
+        }
+
+        private void trbFilter_Scroll(object sender, EventArgs e) {
+            mWaveOut.Filter = Math.Pow(10.0, trbFilter.Value / 20.0);
         }
 
         private void cmbDisplayMode_SelectedIndexChanged(object sender, EventArgs e) {
