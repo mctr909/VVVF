@@ -8,13 +8,15 @@ namespace VVVF {
             InitializeComponent();
         }
 
+        private const int SCOPE_SPEED = 5;
+
         private VvvfOut mWaveOut;
         private DoubleBufferGraphic mWaveGraph;
         private float mScopeA = 0.0f;
         private float mScopeB = 0.0f;
 
         private void Form1_Load(object sender, EventArgs e) {
-            mWaveOut = new VvvfOut();
+            mWaveOut = new VvvfOut(SCOPE_SPEED * picWave.Width);
             var waveOutList = mWaveOut.WaveOutList();
             foreach(var device in waveOutList) {
                 cmbDevices.Items.Add(device.Item1);
@@ -83,9 +85,21 @@ namespace VVVF {
                 mWaveOut.DisplayMode = VvvfOut.EDisplayMode.U_V;
                 break;
             case 1:
-                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.U;
+                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.V_W;
                 break;
             case 2:
+                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.W_U;
+                break;
+            case 3:
+                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.U;
+                break;
+            case 4:
+                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.V;
+                break;
+            case 5:
+                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.W;
+                break;
+            case 6:
                 mWaveOut.DisplayMode = VvvfOut.EDisplayMode.PHASE;
                 break;
             }
@@ -97,43 +111,47 @@ namespace VVVF {
             lblCarrierFreq.Text = string.Format("{0}Hz", mWaveOut.CarrierFreq.ToString("0000.0"));
 
             var graph = mWaveGraph.Graphics;
+            var center = picWave.Width / 2.0f;
+            var maxAmp = picWave.Height / 2.0f;
+            var neutralLevel = maxAmp - 1.0f;
 
-            if (mWaveOut.DisplayMode == VvvfOut.EDisplayMode.PHASE) {
-                graph.DrawLine(Pens.Red, 0, picWave.Height / 2, picWave.Width, picWave.Height / 2);
-                graph.DrawLine(Pens.Red, picWave.Width / 2, 0, picWave.Width / 2, picWave.Height);
-                var ofsX = picWave.Width / 2.0f;
-                var ofsY = picWave.Height / 2.0f;
+            if (VvvfOut.EDisplayMode.PHASE == mWaveOut.DisplayMode) {
+                graph.DrawLine(Pens.Red, 0, neutralLevel, picWave.Width, neutralLevel);
+                graph.DrawLine(Pens.Red, center, 0, center, picWave.Height);
                 for (int i = 0; i < mWaveOut.ScopeA.Length; i++) {
-                    var x1 = ofsX + (float)mWaveOut.ScopeA[i] * picWave.Height / 2.0f;
-                    var y1 = ofsY - (float)mWaveOut.ScopeB[i] * picWave.Height / 2.0f;
-                    graph.DrawLine(Pens.Green, mScopeA, mScopeB, x1, y1);
-                    mScopeA = x1;
-                    mScopeB = y1;
+                    var x = center + (float)mWaveOut.ScopeA[i] * maxAmp;
+                    var y = neutralLevel - (float)mWaveOut.ScopeB[i] * maxAmp;
+                    graph.DrawLine(Pens.Green, mScopeA, mScopeB, x, y);
+                    mScopeA = x;
+                    mScopeB = y;
                 }
             } else {
-                const int SPEED = 7;
-                const float scale = 0.8f;
-                var top = picWave.Height * (0.5f - 0.5f * scale);
-                var bottom = picWave.Height * (0.5f + 0.5f * scale);
+                const float scale = 0.475f;
+                var top = neutralLevel - maxAmp * scale;
+                var bottom = neutralLevel + maxAmp * scale;
                 graph.DrawLine(Pens.Gray, 0, top, picWave.Width, top);
                 graph.DrawLine(Pens.Gray, 0, bottom, picWave.Width, bottom);
-                mScopeA = (float)(picWave.Height * (0.5 - 0.5 * scale * mWaveOut.ScopeA[0]));
-                mScopeB = (float)(picWave.Height * (0.5 - 0.5 * scale * mWaveOut.ScopeB[0]));
-                for (int i = 0, s = 0; s < picWave.Width; i += SPEED, s++) {
+                top = neutralLevel - maxAmp * scale * 2;
+                bottom = neutralLevel + maxAmp * scale * 2;
+                graph.DrawLine(Pens.Gray, 0, top, picWave.Width, top);
+                graph.DrawLine(Pens.Gray, 0, bottom, picWave.Width, bottom);
+                mScopeA = neutralLevel - (float)(mWaveOut.ScopeA[0] * maxAmp * scale);
+                mScopeB = neutralLevel - (float)(mWaveOut.ScopeB[0] * maxAmp * scale);
+                for (int i = 1, s = 0; s < picWave.Width; i += SCOPE_SPEED, s++) {
                     var sumA = 0.0f;
                     var sumB = 0.0f;
-                    for (int j = i; j < i + SPEED && j < mWaveOut.ScopeA.Length; j++) {
-                        sumA += (float)(picWave.Height * (0.5 - 0.5 * scale * mWaveOut.ScopeA[j]));
-                        sumB += (float)(picWave.Height * (0.5 - 0.5 * scale * mWaveOut.ScopeB[j]));
+                    for (int j = i; j < i + SCOPE_SPEED && j < mWaveOut.ScopeA.Length; j++) {
+                        sumA += (float)mWaveOut.ScopeA[j];
+                        sumB += (float)mWaveOut.ScopeB[j];
                     }
-                    sumA /= SPEED;
-                    sumB /= SPEED;
+                    sumA = neutralLevel - sumA * maxAmp * scale / SCOPE_SPEED;
+                    sumB = neutralLevel - sumB * maxAmp * scale / SCOPE_SPEED;
                     graph.DrawLine(Pens.Green, s, mScopeA, s + 1, sumA);
                     graph.DrawLine(Pens.DeepSkyBlue, s, mScopeB, s + 1, sumB);
                     mScopeA = sumA;
                     mScopeB = sumB;
                 }
-                graph.DrawLine(Pens.Red, 0, picWave.Height / 2, picWave.Width, picWave.Height / 2);
+                graph.DrawLine(Pens.Red, 0, neutralLevel, picWave.Width, neutralLevel);
             }
             mWaveGraph.Render();
         }

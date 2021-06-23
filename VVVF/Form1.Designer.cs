@@ -217,7 +217,7 @@
             this.groupBox2.Controls.Add(this.lblOutputFreq);
             this.groupBox2.Location = new System.Drawing.Point(320, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(332, 379);
+            this.groupBox2.Size = new System.Drawing.Size(381, 379);
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "モニター";
@@ -228,7 +228,7 @@
             this.trbFilter.Maximum = 0;
             this.trbFilter.Minimum = -60;
             this.trbFilter.Name = "trbFilter";
-            this.trbFilter.Size = new System.Drawing.Size(320, 45);
+            this.trbFilter.Size = new System.Drawing.Size(369, 45);
             this.trbFilter.TabIndex = 16;
             this.trbFilter.TickFrequency = 6;
             this.trbFilter.Value = -24;
@@ -248,11 +248,15 @@
             this.cmbDisplayMode.FormattingEnabled = true;
             this.cmbDisplayMode.Items.AddRange(new object[] {
             "U相-V相",
+            "V相-W相",
+            "W相-U相",
             "U相",
+            "V相",
+            "W相",
             "位相"});
-            this.cmbDisplayMode.Location = new System.Drawing.Point(242, 23);
+            this.cmbDisplayMode.Location = new System.Drawing.Point(269, 30);
             this.cmbDisplayMode.Name = "cmbDisplayMode";
-            this.cmbDisplayMode.Size = new System.Drawing.Size(84, 20);
+            this.cmbDisplayMode.Size = new System.Drawing.Size(106, 20);
             this.cmbDisplayMode.TabIndex = 14;
             this.cmbDisplayMode.SelectedIndexChanged += new System.EventHandler(this.cmbDisplayMode_SelectedIndexChanged);
             // 
@@ -261,7 +265,7 @@
             this.picWave.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picWave.Location = new System.Drawing.Point(6, 128);
             this.picWave.Name = "picWave";
-            this.picWave.Size = new System.Drawing.Size(320, 245);
+            this.picWave.Size = new System.Drawing.Size(370, 245);
             this.picWave.TabIndex = 6;
             this.picWave.TabStop = false;
             // 
@@ -364,7 +368,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(658, 403);
+            this.ClientSize = new System.Drawing.Size(714, 403);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
