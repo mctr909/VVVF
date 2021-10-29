@@ -1,5 +1,7 @@
 ﻿using System;
 
+using WinMM;
+
 namespace VVVF {
     class VvvfOut : WaveOut {
         public enum EDisplayMode {
@@ -27,7 +29,7 @@ namespace VVVF {
         public double[] ScopeB;
 
         private const double SCALE = 1.2;
-        private const double MIN_POWER = 0.05;
+        private const double MIN_POWER = 0.10;
         private const double FREQ_AT_MAX_POWER = 70.0;
         private const int OVER_SAMPLE = 8;
         private readonly int[] NOTE = new int[] {
@@ -58,14 +60,14 @@ namespace VVVF {
 
         protected override void SetData() {
             if (!IsPlay) {
-                for (int i = 0; i < WaveBuffer.Length; i += 2) {
-                    WaveBuffer[i] = 0;
-                    WaveBuffer[i + 1] = 0;
+                for (int i = 0; i < mWaveBuffer.Length; i += 2) {
+                    mWaveBuffer[i] = 0;
+                    mWaveBuffer[i + 1] = 0;
                 }
                 return;
             }
 
-            for (int i = 0; i < WaveBuffer.Length; i += 2) {
+            for (int i = 0; i < mWaveBuffer.Length; i += 2) {
                 updateFreq();
 
                 var carrier = 0.0;
@@ -172,8 +174,8 @@ namespace VVVF {
                     mScopeIndex++;
                 }
 
-                WaveBuffer[i] = (short)(32767 * Volume * scopeL);
-                WaveBuffer[i + 1] = (short)(32767 * Volume * scopeR);
+                mWaveBuffer[i] = (short)(32767 * Volume * scopeL);
+                mWaveBuffer[i + 1] = (short)(32767 * Volume * scopeR);
             }
         }
 
