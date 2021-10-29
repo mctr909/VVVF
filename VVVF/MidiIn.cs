@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace WinMM {
-    class MidiIn : IDisposable {
+    public class MidiIn : IDisposable {
         [DllImport("winmm.dll")]
         static extern uint midiInGetNumDevs();
 
@@ -37,7 +38,7 @@ namespace WinMM {
         static extern int midiInAddBuffer(uint hMidiIn, ref MIDIHDR lpMidiInHdr, int uSize);
 
         internal class MidiReceiver : Control, IDisposable {
-            public event EventHandler<byte[]> MidiReceived;
+            public Queue<byte[]> ReceivedData;
             uint mSystemHandle = 0;
             bool mIsOpen = false;
             MidiInBuffer mBuffer;
@@ -48,7 +49,7 @@ namespace WinMM {
                 mIsOpen = true;
 
                 // ポートハンドル作成  
-                midiInOpen(ref mSystemHandle, portNum, Handle, 0, CALLBACK.FUNCTION);
+                midiInOpen(ref mSystemHandle, portNum, Handle, 0, CALLBACK.WINDOW);
 
                 // バッファ作成  
                 mBuffer = new MidiInBuffer();
@@ -72,26 +73,11 @@ namespace WinMM {
             void closePortInternal() {
                 if (mIsOpen) {
                     mIsOpen = false;
-
-                    //----------// 入力を停止する  
                     midiInStop(mSystemHandle);
-
-                    //----------// 未処理のバッファをコールバック関数に返す  
-                    /* 
-                    while ((dataHeader.dwFlags & MidiHdrFlag.MHDR_DONE) == 0) 
-                    { 
-                        Thread.Sleep(1); 
-                    } 
-                    */
-
                     midiInReset(mSystemHandle);
                     mBuffer.UnprepareHeader();
                     midiInClose(mSystemHandle);
                 }
-            }
-
-            void onMidiReceived(byte[] e) {
-                MidiReceived?.Invoke(this, e);
             }
 
             protected override void WndProc(ref Message m) {
@@ -109,7 +95,7 @@ namespace WinMM {
                         case 0xA0:
                         case 0xB0:
                         case 0xE0:
-                            onMidiReceived(new byte[3] {
+                            ReceivedData.Enqueue(new byte[3] {
                                 Convert.ToByte(receiveData & 255),
                                 Convert.ToByte((receiveData & 65535) >> 8),
                                 Convert.ToByte((receiveData & ((2 << 24) - 1)) >> 16)
@@ -117,7 +103,7 @@ namespace WinMM {
                             break;
                         case 0xC0:
                         case 0xD0:
-                            onMidiReceived(new byte[2] {
+                            ReceivedData.Enqueue(new byte[2] {
                                 Convert.ToByte(receiveData & 255),
                                 Convert.ToByte((receiveData & 65535) >> 8)
                             });
@@ -129,7 +115,7 @@ namespace WinMM {
                         Thread.CurrentThread.Priority = ThreadPriority.AboveNormal;
                         var receiveLongData = mBuffer.GetData();
                         mBuffer.ResetHeader();
-                        onMidiReceived(receiveLongData);
+                        ReceivedData.Enqueue(receiveLongData);
                         Thread.CurrentThread.Priority = ThreadPriority.Normal;
                         return;
                     case MM_MIM.ERROR:
@@ -218,11 +204,22 @@ namespace WinMM {
         }
 
         MidiReceiver mReceiver;
-        public event EventHandler<byte[]> MidiReceived;
+        public Queue<byte[]> ReceivedData;
         public string Name { get; }
 
-        public static int GetPortCount() {
+        static int GetPortCount() {
             return (int)midiInGetNumDevs();
+        }
+
+        public static List<string> GetPortNames() {
+            var caps = new MidiInCapsA();
+            var count = GetPortCount();
+            var list = new List<string>();
+            for (int i=0; i<count; i++) {
+                midiInGetDevCaps((uint)i, ref caps, (uint)Marshal.SizeOf(typeof(MidiInCapsA)));
+                list.Add(caps.szPname);
+            }
+            return list;
         }
 
         public static MidiInCapsA GetPortInformation(int portNum) {
@@ -233,8 +230,9 @@ namespace WinMM {
 
         public MidiIn(int portNum) {
             Name = GetPortInformation(portNum).szPname;
+            ReceivedData = new Queue<byte[]>();
             mReceiver = new MidiReceiver(portNum);
-            mReceiver.MidiReceived += new EventHandler<byte[]>(midiReceived);
+            mReceiver.ReceivedData = ReceivedData;
         }
 
         public void Dispose() {
@@ -246,10 +244,6 @@ namespace WinMM {
                 mReceiver.ClosePort();
                 mReceiver = null;
             }
-        }
-
-        void midiReceived(object sender, byte[] e) {
-            MidiReceived?.Invoke(this, e);
         }
     }
 }
