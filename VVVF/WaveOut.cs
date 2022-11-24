@@ -46,7 +46,7 @@ namespace WinMM {
         public int Channels { get; }
         public int BufferSize { get; }
 
-        public WaveOut(int sampleRate = 44100, int channels = 2, int bufferSize = 4096, int bufferCount = 4) {
+        public WaveOut(int sampleRate = 192000, int channels = 2, int bufferSize = 4096, int bufferCount = 4) {
             SampleRate = sampleRate;
             Channels = channels;
             BufferSize = bufferSize;

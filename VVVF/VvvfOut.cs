@@ -30,19 +30,19 @@ namespace VVVF {
 
         private const double SCALE = 1.2;
         private const double MIN_POWER = 0.10;
-        private const double FREQ_AT_MAX_POWER = 70.0;
-        private const int OVER_SAMPLE = 8;
+        private const double FREQ_AT_MAX_POWER = 50.0;
+        private const int OVER_SAMPLE = 32;
         private readonly int[] NOTE = new int[] {
-            -2, 0, 2, 4, 5, 7, 9, 11
+            -2, 0, 2, 4, 5, 7, 9, 11, 12
         };
 
-        private Random mRnd = new Random();
         private double mTime = 0.0;
         private double mCarrierTime = 0.0;
         private double mFu = 0.0;
         private double mFv = 0.0;
         private double mFw = 0.0;
-        private int mPulseMode = 0;
+        private int mCurrentMode = 0;
+        private int mTargetMode = 0;
         private int mScopeIndex = 0;
 
         public VvvfOut(int bufferLen) : base() {
@@ -52,7 +52,7 @@ namespace VVVF {
 
         public void Open(uint deviceNumber) {
             WaveOutOpen(deviceNumber);
-        } 
+        }
 
         public void Close() {
             WaveOutClose();
@@ -68,8 +68,6 @@ namespace VVVF {
             }
 
             for (int i = 0; i < mWaveBuffer.Length; i += 2) {
-                updateFreq();
-
                 var carrier = 0.0;
                 for (int o = 0; o < OVER_SAMPLE; o++) {
                     if (mCarrierTime < 0.25) {
@@ -84,7 +82,11 @@ namespace VVVF {
                         mCarrierTime -= 1.0;
                     }
                     mTime += CurrentFreq / SampleRate / OVER_SAMPLE;
-                    if (1.0 <= mTime) {
+                    if (1.0 < mTime) {
+                        if (mTargetMode != mCurrentMode) {
+                            mCarrierTime = 0.0;
+                            mCurrentMode = mTargetMode;
+                        }
                         mTime -= 1.0;
                     }
                 }
@@ -101,14 +103,14 @@ namespace VVVF {
                 if (CurrentFreq < 0.0) {
                     CurrentFreq = 0.0;
                 }
-
+                setCarrierFreq(CurrentFreq);
                 if (CurrentFreq < FREQ_AT_MAX_POWER) {
                     CurrentPower = (MIN_POWER + (1.0 - MIN_POWER) * CurrentFreq / FREQ_AT_MAX_POWER) * TargetPower;
                 } else {
                     CurrentPower = TargetPower;
                 }
 
-                var z = Math.Sin(6 * Math.PI * mTime + Math.PI) / 6.0;
+                var z = Math.Sin(6 * Math.PI * mTime + Math.PI) / 8.0;
                 var u = SCALE * CurrentPower * (z + Math.Sin(2 * Math.PI * mTime + Math.PI / 3));
                 var v = SCALE * CurrentPower * (z + Math.Sin(2 * Math.PI * mTime - Math.PI / 3));
                 var w = SCALE * CurrentPower * (z + Math.Sin(2 * Math.PI * mTime + Math.PI));
@@ -125,41 +127,41 @@ namespace VVVF {
                 var scopeR = 0.0;
                 var scopeB = 0.0;
                 switch (DisplayMode) {
-                case EDisplayMode.U_V:
-                    scopeL = mFu - mFv;
-                    scopeR = mFv - mFw;
-                    scopeB = u - v;
-                    break;
-                case EDisplayMode.V_W:
-                    scopeL = mFv - mFw;
-                    scopeR = mFw - mFu;
-                    scopeB = v - w;
-                    break;
-                case EDisplayMode.W_U:
-                    scopeL = mFw - mFu;
-                    scopeR = mFu - mFv;
-                    scopeB = w - u;
-                    break;
-                case EDisplayMode.U:
-                    scopeL = mFu;
-                    scopeR = mFv;
-                    scopeB = u;
-                    break;
-                case EDisplayMode.V:
-                    scopeL = mFv;
-                    scopeR = mFw;
-                    scopeB = v;
-                    break;
-                case EDisplayMode.W:
-                    scopeL = mFw;
-                    scopeR = mFu;
-                    scopeB = w;
-                    break;
-                case EDisplayMode.PHASE:
-                    scopeL = (2.0 * mFu - mFv - mFw) / 3.0 / SCALE;
-                    scopeR = (mFv - mFw) / 1.732 / SCALE;
-                    scopeB = scopeR;
-                    break;
+                    case EDisplayMode.U_V:
+                        scopeL = mFu - mFv;
+                        scopeR = mFv - mFw;
+                        scopeB = u - v;
+                        break;
+                    case EDisplayMode.V_W:
+                        scopeL = mFv - mFw;
+                        scopeR = mFw - mFu;
+                        scopeB = v - w;
+                        break;
+                    case EDisplayMode.W_U:
+                        scopeL = mFw - mFu;
+                        scopeR = mFu - mFv;
+                        scopeB = w - u;
+                        break;
+                    case EDisplayMode.U:
+                        scopeL = mFu;
+                        scopeR = mFv;
+                        scopeB = u;
+                        break;
+                    case EDisplayMode.V:
+                        scopeL = mFv;
+                        scopeR = mFw;
+                        scopeB = v;
+                        break;
+                    case EDisplayMode.W:
+                        scopeL = mFw;
+                        scopeR = mFu;
+                        scopeB = w;
+                        break;
+                    case EDisplayMode.PHASE:
+                        scopeL = (2.0 * mFu - mFv - mFw) / 3.0 / SCALE;
+                        scopeR = (mFv - mFw) / 1.732 / SCALE;
+                        scopeB = scopeR;
+                        break;
                 }
 
                 if (ScopeA.Length <= mScopeIndex) {
@@ -179,44 +181,29 @@ namespace VVVF {
             }
         }
 
-        private void updateFreq() {
-            if (CurrentFreq < 5) {
-                var index = (int)(CurrentFreq * NOTE.Length / 5.0);
-                CarrierFreq = 200 * Math.Pow(2.0, NOTE[index] / 12.0);
-                mPulseMode = 0;
+        void setCarrierFreq(double signalFreq) {
+            if (signalFreq < 4) {
+                CarrierFreq = 200;
+                mCurrentMode = 0;
+                mTargetMode = 0;
                 return;
             }
-
-            if (CurrentFreq < 24) {
-                CarrierFreq = 400;
-                mPulseMode = 0;
-                return;
-            }
-
-            var pulseMode = mPulseMode;
-
-            if (CurrentFreq < 26) {
-                mPulseMode = 15;
-            } else if (CurrentFreq < 30) {
-                mPulseMode = 13;
-            } else if (CurrentFreq < 35) {
-                mPulseMode = 11;
-            } else if (CurrentFreq < 43) {
-                mPulseMode = 9;
-            } else if (CurrentFreq < 56) {
-                mPulseMode = 7;
-            } else if (CurrentFreq < 58) {
-                mPulseMode = 5;
-            } else if (CurrentFreq < 80) {
-                mPulseMode = 3;
+            if (signalFreq < 6) {
+                mTargetMode = 45;
+            } else if (signalFreq < 12) {
+                mTargetMode = 27;
+            } else if (signalFreq < 20) {
+                mTargetMode = 15;
+            } else if (signalFreq < 30) {
+                mTargetMode = 11;
+            } else if (signalFreq < 36) {
+                mTargetMode = 9;
             } else {
-                mPulseMode = 3;
+                mTargetMode = 3;
             }
-
-            if (pulseMode != mPulseMode) {
-                mCarrierTime = mTime * mPulseMode;
+            if (0 < mCurrentMode) {
+                CarrierFreq = signalFreq * mCurrentMode;
             }
-            CarrierFreq = CurrentFreq * mPulseMode;
         }
     }
 }

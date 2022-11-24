@@ -66,10 +66,9 @@
             // 
             // btnPlayStop
             // 
-            this.btnPlayStop.Location = new System.Drawing.Point(479, 230);
-            this.btnPlayStop.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.btnPlayStop.Location = new System.Drawing.Point(221, 115);
             this.btnPlayStop.Name = "btnPlayStop";
-            this.btnPlayStop.Size = new System.Drawing.Size(163, 46);
+            this.btnPlayStop.Size = new System.Drawing.Size(75, 23);
             this.btnPlayStop.TabIndex = 0;
             this.btnPlayStop.Text = "再生";
             this.btnPlayStop.UseVisualStyleBackColor = true;
@@ -78,30 +77,27 @@
             // cmbDevices
             // 
             this.cmbDevices.FormattingEnabled = true;
-            this.cmbDevices.Location = new System.Drawing.Point(13, 58);
-            this.cmbDevices.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.cmbDevices.Location = new System.Drawing.Point(6, 29);
             this.cmbDevices.Name = "cmbDevices";
-            this.cmbDevices.Size = new System.Drawing.Size(624, 32);
+            this.cmbDevices.Size = new System.Drawing.Size(290, 20);
             this.cmbDevices.TabIndex = 1;
             this.cmbDevices.SelectedIndexChanged += new System.EventHandler(this.cmbDevices_SelectedIndexChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 28);
-            this.label1.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.label1.Location = new System.Drawing.Point(6, 14);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(150, 24);
+            this.label1.Size = new System.Drawing.Size(75, 12);
             this.label1.TabIndex = 2;
             this.label1.Text = "音声の出力先";
             // 
             // trbTargetFreq
             // 
-            this.trbTargetFreq.Location = new System.Drawing.Point(13, 90);
-            this.trbTargetFreq.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
-            this.trbTargetFreq.Maximum = 120;
+            this.trbTargetFreq.Location = new System.Drawing.Point(6, 45);
+            this.trbTargetFreq.Maximum = 200;
             this.trbTargetFreq.Name = "trbTargetFreq";
-            this.trbTargetFreq.Size = new System.Drawing.Size(433, 90);
+            this.trbTargetFreq.Size = new System.Drawing.Size(200, 45);
             this.trbTargetFreq.TabIndex = 3;
             this.trbTargetFreq.TickFrequency = 10;
             this.trbTargetFreq.Value = 120;
@@ -109,24 +105,22 @@
             // 
             // trbAcc
             // 
-            this.trbAcc.Location = new System.Drawing.Point(13, 216);
-            this.trbAcc.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.trbAcc.Location = new System.Drawing.Point(6, 108);
             this.trbAcc.Maximum = 100;
             this.trbAcc.Name = "trbAcc";
-            this.trbAcc.Size = new System.Drawing.Size(433, 90);
+            this.trbAcc.Size = new System.Drawing.Size(200, 45);
             this.trbAcc.TabIndex = 4;
             this.trbAcc.TickFrequency = 10;
-            this.trbAcc.Value = 32;
+            this.trbAcc.Value = 24;
             this.trbAcc.Scroll += new System.EventHandler(this.trbAcc_Scroll);
             // 
             // lblTargetFreq
             // 
             this.lblTargetFreq.AutoSize = true;
             this.lblTargetFreq.Font = new System.Drawing.Font("Meiryo UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lblTargetFreq.Location = new System.Drawing.Point(444, 90);
-            this.lblTargetFreq.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.lblTargetFreq.Location = new System.Drawing.Point(205, 45);
             this.lblTargetFreq.Name = "lblTargetFreq";
-            this.lblTargetFreq.Size = new System.Drawing.Size(111, 38);
+            this.lblTargetFreq.Size = new System.Drawing.Size(55, 19);
             this.lblTargetFreq.TabIndex = 5;
             this.lblTargetFreq.Text = "000Hz";
             this.lblTargetFreq.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -135,10 +129,9 @@
             // 
             this.lblAcc.AutoSize = true;
             this.lblAcc.Font = new System.Drawing.Font("Meiryo UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lblAcc.Location = new System.Drawing.Point(444, 216);
-            this.lblAcc.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.lblAcc.Location = new System.Drawing.Point(205, 108);
             this.lblAcc.Name = "lblAcc";
-            this.lblAcc.Size = new System.Drawing.Size(183, 38);
+            this.lblAcc.Size = new System.Drawing.Size(92, 19);
             this.lblAcc.TabIndex = 6;
             this.lblAcc.Text = "00.0Hz/sec";
             this.lblAcc.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -146,20 +139,18 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 60);
-            this.label2.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.label2.Location = new System.Drawing.Point(6, 30);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(130, 24);
+            this.label2.Size = new System.Drawing.Size(65, 12);
             this.label2.TabIndex = 7;
             this.label2.Text = "目標周波数";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(9, 186);
-            this.label3.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.label3.Location = new System.Drawing.Point(4, 93);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(82, 24);
+            this.label3.Size = new System.Drawing.Size(41, 12);
             this.label3.TabIndex = 8;
             this.label3.Text = "加速度";
             // 
@@ -174,11 +165,9 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.trbTargetFreq);
             this.groupBox1.Controls.Add(this.trbAcc);
-            this.groupBox1.Location = new System.Drawing.Point(26, 324);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.groupBox1.Location = new System.Drawing.Point(12, 162);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(7, 6, 7, 6);
-            this.groupBox1.Size = new System.Drawing.Size(654, 460);
+            this.groupBox1.Size = new System.Drawing.Size(302, 230);
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "操作";
@@ -187,10 +176,9 @@
             // 
             this.lblPower.AutoSize = true;
             this.lblPower.Font = new System.Drawing.Font("Meiryo UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lblPower.Location = new System.Drawing.Point(444, 342);
-            this.lblPower.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.lblPower.Location = new System.Drawing.Point(205, 171);
             this.lblPower.Name = "lblPower";
-            this.lblPower.Size = new System.Drawing.Size(105, 38);
+            this.lblPower.Size = new System.Drawing.Size(51, 19);
             this.lblPower.TabIndex = 11;
             this.lblPower.Text = "100%";
             this.lblPower.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -198,20 +186,18 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(13, 312);
-            this.label4.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.label4.Location = new System.Drawing.Point(6, 156);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(58, 24);
+            this.label4.Size = new System.Drawing.Size(29, 12);
             this.label4.TabIndex = 10;
             this.label4.Text = "出力";
             // 
             // trbPower
             // 
-            this.trbPower.Location = new System.Drawing.Point(13, 342);
-            this.trbPower.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.trbPower.Location = new System.Drawing.Point(6, 171);
             this.trbPower.Maximum = 100;
             this.trbPower.Name = "trbPower";
-            this.trbPower.Size = new System.Drawing.Size(433, 90);
+            this.trbPower.Size = new System.Drawing.Size(200, 45);
             this.trbPower.TabIndex = 9;
             this.trbPower.TickFrequency = 10;
             this.trbPower.Value = 100;
@@ -229,23 +215,20 @@
             this.groupBox2.Controls.Add(this.label6);
             this.groupBox2.Controls.Add(this.lblOutputPower);
             this.groupBox2.Controls.Add(this.lblOutputFreq);
-            this.groupBox2.Location = new System.Drawing.Point(693, 24);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.groupBox2.Location = new System.Drawing.Point(320, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(7, 6, 7, 6);
-            this.groupBox2.Size = new System.Drawing.Size(826, 758);
+            this.groupBox2.Size = new System.Drawing.Size(381, 379);
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "モニター";
             // 
             // trbFilter
             // 
-            this.trbFilter.Location = new System.Drawing.Point(13, 154);
-            this.trbFilter.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.trbFilter.Location = new System.Drawing.Point(6, 77);
             this.trbFilter.Maximum = 0;
             this.trbFilter.Minimum = -60;
             this.trbFilter.Name = "trbFilter";
-            this.trbFilter.Size = new System.Drawing.Size(800, 90);
+            this.trbFilter.Size = new System.Drawing.Size(369, 45);
             this.trbFilter.TabIndex = 16;
             this.trbFilter.TickFrequency = 6;
             this.trbFilter.Value = -24;
@@ -254,10 +237,9 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(13, 124);
-            this.label9.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.label9.Location = new System.Drawing.Point(6, 62);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(97, 24);
+            this.label9.Size = new System.Drawing.Size(48, 12);
             this.label9.TabIndex = 15;
             this.label9.Text = "フィルター";
             // 
@@ -272,20 +254,18 @@
             "V相",
             "W相",
             "位相"});
-            this.cmbDisplayMode.Location = new System.Drawing.Point(583, 60);
-            this.cmbDisplayMode.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.cmbDisplayMode.Location = new System.Drawing.Point(269, 30);
             this.cmbDisplayMode.Name = "cmbDisplayMode";
-            this.cmbDisplayMode.Size = new System.Drawing.Size(225, 32);
+            this.cmbDisplayMode.Size = new System.Drawing.Size(106, 20);
             this.cmbDisplayMode.TabIndex = 14;
             this.cmbDisplayMode.SelectedIndexChanged += new System.EventHandler(this.cmbDisplayMode_SelectedIndexChanged);
             // 
             // picWave
             // 
             this.picWave.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picWave.Location = new System.Drawing.Point(13, 256);
-            this.picWave.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.picWave.Location = new System.Drawing.Point(6, 128);
             this.picWave.Name = "picWave";
-            this.picWave.Size = new System.Drawing.Size(799, 488);
+            this.picWave.Size = new System.Drawing.Size(370, 245);
             this.picWave.TabIndex = 6;
             this.picWave.TabStop = false;
             // 
@@ -293,40 +273,36 @@
             // 
             this.lblCarrierFreq.AutoSize = true;
             this.lblCarrierFreq.Font = new System.Drawing.Font("Meiryo UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lblCarrierFreq.Location = new System.Drawing.Point(340, 54);
-            this.lblCarrierFreq.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.lblCarrierFreq.Location = new System.Drawing.Point(157, 27);
             this.lblCarrierFreq.Name = "lblCarrierFreq";
-            this.lblCarrierFreq.Size = new System.Drawing.Size(159, 38);
+            this.lblCarrierFreq.Size = new System.Drawing.Size(78, 19);
             this.lblCarrierFreq.TabIndex = 5;
             this.lblCarrierFreq.Text = "0000.0Hz";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(345, 30);
-            this.label8.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.label8.Location = new System.Drawing.Point(159, 15);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(154, 24);
+            this.label8.Size = new System.Drawing.Size(77, 12);
             this.label8.TabIndex = 4;
             this.label8.Text = "搬送波周波数";
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(9, 30);
-            this.label7.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.label7.Location = new System.Drawing.Point(4, 15);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(84, 24);
+            this.label7.Size = new System.Drawing.Size(43, 12);
             this.label7.TabIndex = 3;
             this.label7.Text = "出力(%)";
             // 
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(167, 30);
-            this.label6.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.label6.Location = new System.Drawing.Point(77, 15);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(130, 24);
+            this.label6.Size = new System.Drawing.Size(65, 12);
             this.label6.TabIndex = 2;
             this.label6.Text = "出力周波数";
             // 
@@ -334,10 +310,9 @@
             // 
             this.lblOutputPower.AutoSize = true;
             this.lblOutputPower.Font = new System.Drawing.Font("Meiryo UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lblOutputPower.Location = new System.Drawing.Point(4, 54);
-            this.lblOutputPower.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.lblOutputPower.Location = new System.Drawing.Point(2, 27);
             this.lblOutputPower.Name = "lblOutputPower";
-            this.lblOutputPower.Size = new System.Drawing.Size(105, 38);
+            this.lblOutputPower.Size = new System.Drawing.Size(51, 19);
             this.lblOutputPower.TabIndex = 1;
             this.lblOutputPower.Text = "000%";
             // 
@@ -345,10 +320,9 @@
             // 
             this.lblOutputFreq.AutoSize = true;
             this.lblOutputFreq.Font = new System.Drawing.Font("Meiryo UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lblOutputFreq.Location = new System.Drawing.Point(163, 54);
-            this.lblOutputFreq.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.lblOutputFreq.Location = new System.Drawing.Point(75, 27);
             this.lblOutputFreq.Name = "lblOutputFreq";
-            this.lblOutputFreq.Size = new System.Drawing.Size(140, 38);
+            this.lblOutputFreq.Size = new System.Drawing.Size(69, 19);
             this.lblOutputFreq.TabIndex = 0;
             this.lblOutputFreq.Text = "000.0Hz";
             // 
@@ -358,12 +332,11 @@
             // 
             // trbVolume
             // 
-            this.trbVolume.Location = new System.Drawing.Point(9, 141);
-            this.trbVolume.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.trbVolume.Location = new System.Drawing.Point(4, 70);
             this.trbVolume.Maximum = -18;
             this.trbVolume.Minimum = -72;
             this.trbVolume.Name = "trbVolume";
-            this.trbVolume.Size = new System.Drawing.Size(628, 90);
+            this.trbVolume.Size = new System.Drawing.Size(290, 45);
             this.trbVolume.TabIndex = 11;
             this.trbVolume.TickFrequency = 6;
             this.trbVolume.Value = -48;
@@ -372,10 +345,9 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(14, 111);
-            this.label5.Margin = new System.Windows.Forms.Padding(7, 0, 7, 0);
+            this.label5.Location = new System.Drawing.Point(6, 56);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(58, 24);
+            this.label5.Size = new System.Drawing.Size(29, 12);
             this.label5.TabIndex = 12;
             this.label5.Text = "音量";
             // 
@@ -386,23 +358,20 @@
             this.groupBox3.Controls.Add(this.label5);
             this.groupBox3.Controls.Add(this.cmbDevices);
             this.groupBox3.Controls.Add(this.trbVolume);
-            this.groupBox3.Location = new System.Drawing.Point(26, 24);
-            this.groupBox3.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
+            this.groupBox3.Location = new System.Drawing.Point(12, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Padding = new System.Windows.Forms.Padding(7, 6, 7, 6);
-            this.groupBox3.Size = new System.Drawing.Size(654, 288);
+            this.groupBox3.Size = new System.Drawing.Size(302, 144);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(13F, 24F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1547, 806);
+            this.ClientSize = new System.Drawing.Size(714, 403);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Margin = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);

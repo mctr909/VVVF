@@ -8,7 +8,7 @@ namespace VVVF {
             InitializeComponent();
         }
 
-        private const int SCOPE_SPEED = 5;
+        private const int SCOPE_SPEED = 12;
 
         private VvvfOut mWaveOut;
         private DoubleBufferGraphic mWaveGraph;
@@ -33,7 +33,7 @@ namespace VVVF {
             trbPower_Scroll(null, null);
             trbFilter_Scroll(null, null);
 
-            timer1.Interval = 10;
+            timer1.Interval = 1;
             timer1.Start();
         }
 
