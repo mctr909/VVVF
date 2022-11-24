@@ -8,7 +8,7 @@ namespace VVVF {
             InitializeComponent();
         }
 
-        private const int SCOPE_SPEED = 12;
+        private const int SCOPE_SPEED = 20;
 
         private VvvfOut mWaveOut;
         private DoubleBufferGraphic mWaveGraph;

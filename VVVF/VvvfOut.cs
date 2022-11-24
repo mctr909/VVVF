@@ -182,20 +182,18 @@ namespace VVVF {
         }
 
         void setCarrierFreq(double signalFreq) {
-            if (signalFreq < 4) {
+            if (signalFreq < 6) {
                 CarrierFreq = 200;
                 mCurrentMode = 0;
                 mTargetMode = 0;
                 return;
             }
-            if (signalFreq < 6) {
+            if (signalFreq < 7) {
                 mTargetMode = 45;
-            } else if (signalFreq < 12) {
+            } else if (signalFreq < 16) {
                 mTargetMode = 27;
-            } else if (signalFreq < 20) {
+            } else if (signalFreq < 28) {
                 mTargetMode = 15;
-            } else if (signalFreq < 30) {
-                mTargetMode = 11;
             } else if (signalFreq < 36) {
                 mTargetMode = 9;
             } else {
