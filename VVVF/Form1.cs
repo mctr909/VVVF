@@ -8,7 +8,7 @@ namespace VVVF {
             InitializeComponent();
         }
 
-        private const int SCOPE_SPEED = 20;
+        private const int SCOPE_SPEED = 32;
 
         private VvvfOut mWaveOut;
         private DoubleBufferGraphic mWaveGraph;
@@ -114,6 +114,12 @@ namespace VVVF {
             var center = picWave.Width / 2.0f;
             var maxAmp = picWave.Height / 2.0f;
             var neutralLevel = maxAmp - 1.0f;
+
+            if (0 == mWaveOut.CurrentMode) {
+                lblMode.Text = "非同期";
+            } else {
+                lblMode.Text = mWaveOut.CurrentMode.ToString();
+            }
 
             if (VvvfOut.EDisplayMode.PHASE == mWaveOut.DisplayMode) {
                 graph.DrawLine(Pens.Red, 0, neutralLevel, picWave.Width, neutralLevel);

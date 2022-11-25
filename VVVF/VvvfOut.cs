@@ -29,7 +29,7 @@ namespace VVVF {
         public double[] ScopeB;
 
         private const double SCALE = 1.2;
-        private const double MIN_POWER = 0.10;
+        private const double MIN_POWER = 0.07;
         private const double FREQ_AT_MAX_POWER = 50.0;
         private const int OVER_SAMPLE = 32;
         private readonly int[] NOTE = new int[] {
@@ -41,7 +41,7 @@ namespace VVVF {
         private double mFu = 0.0;
         private double mFv = 0.0;
         private double mFw = 0.0;
-        private int mCurrentMode = 0;
+        public int CurrentMode = 0;
         private int mTargetMode = 0;
         private int mScopeIndex = 0;
 
@@ -83,9 +83,9 @@ namespace VVVF {
                     }
                     mTime += CurrentFreq / SampleRate / OVER_SAMPLE;
                     if (1.0 < mTime) {
-                        if (mTargetMode != mCurrentMode) {
+                        if (mTargetMode != CurrentMode) {
                             mCarrierTime = 0.0;
-                            mCurrentMode = mTargetMode;
+                            CurrentMode = mTargetMode;
                         }
                         mTime -= 1.0;
                     }
@@ -184,7 +184,7 @@ namespace VVVF {
         void setCarrierFreq(double signalFreq) {
             if (signalFreq < 6) {
                 CarrierFreq = 200;
-                mCurrentMode = 0;
+                CurrentMode = 0;
                 mTargetMode = 0;
                 return;
             }
@@ -199,8 +199,8 @@ namespace VVVF {
             } else {
                 mTargetMode = 3;
             }
-            if (0 < mCurrentMode) {
-                CarrierFreq = signalFreq * mCurrentMode;
+            if (0 < CurrentMode) {
+                CarrierFreq = signalFreq * CurrentMode;
             }
         }
     }

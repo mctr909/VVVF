@@ -38,6 +38,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.trbPower = new System.Windows.Forms.TrackBar();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.lblMode = new System.Windows.Forms.Label();
             this.trbFilter = new System.Windows.Forms.TrackBar();
             this.label9 = new System.Windows.Forms.Label();
             this.cmbDisplayMode = new System.Windows.Forms.ComboBox();
@@ -205,6 +206,7 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.lblMode);
             this.groupBox2.Controls.Add(this.trbFilter);
             this.groupBox2.Controls.Add(this.label9);
             this.groupBox2.Controls.Add(this.cmbDisplayMode);
@@ -217,10 +219,20 @@
             this.groupBox2.Controls.Add(this.lblOutputFreq);
             this.groupBox2.Location = new System.Drawing.Point(320, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(381, 379);
+            this.groupBox2.Size = new System.Drawing.Size(467, 379);
             this.groupBox2.TabIndex = 10;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "モニター";
+            // 
+            // lblMode
+            // 
+            this.lblMode.AutoSize = true;
+            this.lblMode.Font = new System.Drawing.Font("Meiryo UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
+            this.lblMode.Location = new System.Drawing.Point(248, 26);
+            this.lblMode.Name = "lblMode";
+            this.lblMode.Size = new System.Drawing.Size(54, 19);
+            this.lblMode.TabIndex = 17;
+            this.lblMode.Text = "非同期";
             // 
             // trbFilter
             // 
@@ -228,7 +240,7 @@
             this.trbFilter.Maximum = 0;
             this.trbFilter.Minimum = -60;
             this.trbFilter.Name = "trbFilter";
-            this.trbFilter.Size = new System.Drawing.Size(369, 45);
+            this.trbFilter.Size = new System.Drawing.Size(455, 45);
             this.trbFilter.TabIndex = 16;
             this.trbFilter.TickFrequency = 6;
             this.trbFilter.Value = -24;
@@ -254,18 +266,18 @@
             "V相",
             "W相",
             "位相"});
-            this.cmbDisplayMode.Location = new System.Drawing.Point(269, 30);
+            this.cmbDisplayMode.Location = new System.Drawing.Point(329, 30);
             this.cmbDisplayMode.Name = "cmbDisplayMode";
-            this.cmbDisplayMode.Size = new System.Drawing.Size(106, 20);
+            this.cmbDisplayMode.Size = new System.Drawing.Size(96, 20);
             this.cmbDisplayMode.TabIndex = 14;
             this.cmbDisplayMode.SelectedIndexChanged += new System.EventHandler(this.cmbDisplayMode_SelectedIndexChanged);
             // 
             // picWave
             // 
             this.picWave.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picWave.Location = new System.Drawing.Point(6, 128);
+            this.picWave.Location = new System.Drawing.Point(8, 125);
             this.picWave.Name = "picWave";
-            this.picWave.Size = new System.Drawing.Size(370, 245);
+            this.picWave.Size = new System.Drawing.Size(453, 115);
             this.picWave.TabIndex = 6;
             this.picWave.TabStop = false;
             // 
@@ -273,7 +285,7 @@
             // 
             this.lblCarrierFreq.AutoSize = true;
             this.lblCarrierFreq.Font = new System.Drawing.Font("Meiryo UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lblCarrierFreq.Location = new System.Drawing.Point(157, 27);
+            this.lblCarrierFreq.Location = new System.Drawing.Point(152, 27);
             this.lblCarrierFreq.Name = "lblCarrierFreq";
             this.lblCarrierFreq.Size = new System.Drawing.Size(78, 19);
             this.lblCarrierFreq.TabIndex = 5;
@@ -282,7 +294,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(159, 15);
+            this.label8.Location = new System.Drawing.Point(154, 14);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(77, 12);
             this.label8.TabIndex = 4;
@@ -300,7 +312,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(77, 15);
+            this.label6.Location = new System.Drawing.Point(70, 14);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(65, 12);
             this.label6.TabIndex = 2;
@@ -320,7 +332,7 @@
             // 
             this.lblOutputFreq.AutoSize = true;
             this.lblOutputFreq.Font = new System.Drawing.Font("Meiryo UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
-            this.lblOutputFreq.Location = new System.Drawing.Point(75, 27);
+            this.lblOutputFreq.Location = new System.Drawing.Point(68, 27);
             this.lblOutputFreq.Name = "lblOutputFreq";
             this.lblOutputFreq.Size = new System.Drawing.Size(69, 19);
             this.lblOutputFreq.TabIndex = 0;
@@ -368,7 +380,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(714, 403);
+            this.ClientSize = new System.Drawing.Size(799, 403);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -422,6 +434,7 @@
         private System.Windows.Forms.ColorDialog colorDialog1;
         private System.Windows.Forms.TrackBar trbFilter;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label lblMode;
     }
 }
 
