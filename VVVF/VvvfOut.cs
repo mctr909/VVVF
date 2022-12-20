@@ -15,6 +15,7 @@ namespace VVVF {
         };
 
         public bool IsPlay = false;
+        public int CurrentMode = 0;
         public int TargetFreq = 0;
         public double TargetPower = 0.0;
         public double Acc = 0.0;
@@ -32,8 +33,14 @@ namespace VVVF {
         private const double MIN_POWER = 0.07;
         private const double FREQ_AT_MAX_POWER = 50.0;
         private const int OVER_SAMPLE = 32;
-        private readonly int[] NOTE = new int[] {
-            -2, 0, 2, 4, 5, 7, 9, 11, 12
+
+        private readonly int[] WAVE = new int[] {
+              0,  5,  9, 12,
+             13, 13, 13, 13,
+             13, 12,  9,  5,
+              0, -5, -9,-12,
+            -13,-13,-13,-13,
+            -13,-12, -9, -5
         };
 
         private double mTime = 0.0;
@@ -41,7 +48,7 @@ namespace VVVF {
         private double mFu = 0.0;
         private double mFv = 0.0;
         private double mFw = 0.0;
-        public int CurrentMode = 0;
+        private double mIndex = 0;
         private int mTargetMode = 0;
         private int mScopeIndex = 0;
 
@@ -110,10 +117,43 @@ namespace VVVF {
                     CurrentPower = TargetPower;
                 }
 
-                var z = Math.Sin(6 * Math.PI * mTime + Math.PI) / 8.0;
-                var u = SCALE * CurrentPower * (z + Math.Sin(2 * Math.PI * mTime + Math.PI / 3));
-                var v = SCALE * CurrentPower * (z + Math.Sin(2 * Math.PI * mTime - Math.PI / 3));
-                var w = SCALE * CurrentPower * (z + Math.Sin(2 * Math.PI * mTime + Math.PI));
+                var du = mIndex;
+                var dv = mIndex + WAVE.Length / 3;
+                var dw = mIndex + WAVE.Length - WAVE.Length / 3;
+                var iua = (int)du;
+                var iva = (int)dv;
+                var iwa = (int)dw;
+                var iub = iua + 1;
+                var ivb = iva + 1;
+                var iwb = iwa + 1;
+                du = du - iua;
+                dv = dv - iva;
+                dw = dw - iwa;
+
+                if (WAVE.Length <= iub) {
+                    iub -= WAVE.Length;
+                }
+                if (WAVE.Length <= iva) {
+                    iva -= WAVE.Length;
+                }
+                if (WAVE.Length <= ivb) {
+                    ivb -= WAVE.Length;
+                }
+                if (WAVE.Length <= iwa) {
+                    iwa -= WAVE.Length;
+                }
+                if (WAVE.Length <= iwb) {
+                    iwb -= WAVE.Length;
+                }
+
+                var u = SCALE * CurrentPower * (WAVE[iua] * (1.0 - du) + WAVE[iub] * du) / 13.0;
+                var v = SCALE * CurrentPower * (WAVE[iva] * (1.0 - dv) + WAVE[ivb] * dv) / 13.0;
+                var w = SCALE * CurrentPower * (WAVE[iwa] * (1.0 - dw) + WAVE[iwb] * dw) / 13.0;
+
+                mIndex += (CurrentFreq * WAVE.Length / SampleRate);
+                if ((WAVE.Length) <= mIndex) {
+                    mIndex -= WAVE.Length;
+                }
 
                 var pwm_u = carrier < u ? 1 : -1;
                 var pwm_v = carrier < v ? 1 : -1;
@@ -127,41 +167,41 @@ namespace VVVF {
                 var scopeR = 0.0;
                 var scopeB = 0.0;
                 switch (DisplayMode) {
-                    case EDisplayMode.U_V:
-                        scopeL = mFu - mFv;
-                        scopeR = mFv - mFw;
-                        scopeB = u - v;
-                        break;
-                    case EDisplayMode.V_W:
-                        scopeL = mFv - mFw;
-                        scopeR = mFw - mFu;
-                        scopeB = v - w;
-                        break;
-                    case EDisplayMode.W_U:
-                        scopeL = mFw - mFu;
-                        scopeR = mFu - mFv;
-                        scopeB = w - u;
-                        break;
-                    case EDisplayMode.U:
-                        scopeL = mFu;
-                        scopeR = mFv;
-                        scopeB = u;
-                        break;
-                    case EDisplayMode.V:
-                        scopeL = mFv;
-                        scopeR = mFw;
-                        scopeB = v;
-                        break;
-                    case EDisplayMode.W:
-                        scopeL = mFw;
-                        scopeR = mFu;
-                        scopeB = w;
-                        break;
-                    case EDisplayMode.PHASE:
-                        scopeL = (2.0 * mFu - mFv - mFw) / 3.0 / SCALE;
-                        scopeR = (mFv - mFw) / 1.732 / SCALE;
-                        scopeB = scopeR;
-                        break;
+                case EDisplayMode.U_V:
+                    scopeL = mFu - mFv;
+                    scopeR = mFv - mFw;
+                    scopeB = u - v;
+                    break;
+                case EDisplayMode.V_W:
+                    scopeL = mFv - mFw;
+                    scopeR = mFw - mFu;
+                    scopeB = v - w;
+                    break;
+                case EDisplayMode.W_U:
+                    scopeL = mFw - mFu;
+                    scopeR = mFu - mFv;
+                    scopeB = w - u;
+                    break;
+                case EDisplayMode.U:
+                    scopeL = mFu;
+                    scopeR = mFv;
+                    scopeB = u;
+                    break;
+                case EDisplayMode.V:
+                    scopeL = mFv;
+                    scopeR = mFw;
+                    scopeB = v;
+                    break;
+                case EDisplayMode.W:
+                    scopeL = mFw;
+                    scopeR = mFu;
+                    scopeB = w;
+                    break;
+                case EDisplayMode.PHASE:
+                    scopeL = (2.0 * mFu - mFv - mFw) / 3.0 / SCALE;
+                    scopeR = (mFv - mFw) / 1.732 / SCALE;
+                    scopeB = scopeR;
+                    break;
                 }
 
                 if (ScopeA.Length <= mScopeIndex) {
