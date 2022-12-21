@@ -91,7 +91,11 @@ namespace VVVF {
                     mTime += CurrentFreq / SampleRate / OVER_SAMPLE;
                     if (1.0 < mTime) {
                         if (mTargetMode != CurrentMode) {
-                            mCarrierTime = 0.0;
+                            if (3 == mTargetMode) {
+                                mCarrierTime = 0.5;
+                            } else {
+                                mCarrierTime = 0.0;
+                            }
                             CurrentMode = mTargetMode;
                         }
                         mTime -= 1.0;
@@ -110,7 +114,7 @@ namespace VVVF {
                 if (CurrentFreq < 0.0) {
                     CurrentFreq = 0.0;
                 }
-                setCarrierFreq(CurrentFreq);
+                setCarrierFreqIGBT(CurrentFreq);
                 if (CurrentFreq < FREQ_AT_MAX_POWER) {
                     CurrentPower = (MIN_POWER + (1.0 - MIN_POWER) * CurrentFreq / FREQ_AT_MAX_POWER) * TargetPower;
                 } else {
@@ -146,9 +150,9 @@ namespace VVVF {
                     iwb -= WAVE.Length;
                 }
 
-                var u = SCALE * CurrentPower * (WAVE[iua] * (1.0 - du) + WAVE[iub] * du) / 13.0;
-                var v = SCALE * CurrentPower * (WAVE[iva] * (1.0 - dv) + WAVE[ivb] * dv) / 13.0;
-                var w = SCALE * CurrentPower * (WAVE[iwa] * (1.0 - dw) + WAVE[iwb] * dw) / 13.0;
+                var u = SCALE * CurrentPower * (WAVE[iua] * (1.0 - du) + WAVE[iub] * du) / 15.0;
+                var v = SCALE * CurrentPower * (WAVE[iva] * (1.0 - dv) + WAVE[ivb] * dv) / 15.0;
+                var w = SCALE * CurrentPower * (WAVE[iwa] * (1.0 - dw) + WAVE[iwb] * dw) / 15.0;
 
                 mIndex += (CurrentFreq * WAVE.Length / SampleRate);
                 if ((WAVE.Length) <= mIndex) {
@@ -215,13 +219,12 @@ namespace VVVF {
                     ScopeB[mScopeIndex] = scopeB;
                     mScopeIndex++;
                 }
-
                 mWaveBuffer[i] = (short)(32767 * Volume * scopeL);
                 mWaveBuffer[i + 1] = (short)(32767 * Volume * scopeR);
             }
         }
 
-        void setCarrierFreq(double signalFreq) {
+        void setCarrierFreqGTO(double signalFreq) {
             if (signalFreq < 6) {
                 CarrierFreq = 200;
                 CurrentMode = 0;
@@ -235,6 +238,23 @@ namespace VVVF {
             } else if (signalFreq < 28) {
                 mTargetMode = 15;
             } else if (signalFreq < 36) {
+                mTargetMode = 9;
+            } else {
+                mTargetMode = 3;
+            }
+            if (0 < CurrentMode) {
+                CarrierFreq = signalFreq * CurrentMode;
+            }
+        }
+
+        void setCarrierFreqIGBT(double signalFreq) {
+            if (signalFreq < 50) {
+                CarrierFreq = 1200;
+                CurrentMode = 0;
+                mTargetMode = 0;
+                return;
+            }
+            if (signalFreq < 100) {
                 mTargetMode = 9;
             } else {
                 mTargetMode = 3;
