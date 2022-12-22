@@ -30,17 +30,15 @@ namespace VVVF {
         public double[] ScopeB;
 
         private const double SCALE = 1.2;
-        private const double MIN_POWER = 0.07;
+        private const double MIN_POWER = 0.05;
         private const double FREQ_AT_MAX_POWER = 50.0;
         private const int OVER_SAMPLE = 32;
 
         private readonly int[] WAVE = new int[] {
-              0,  5,  9, 12,
-             13, 13, 13, 13,
-             13, 12,  9,  5,
-              0, -5, -9,-12,
-            -13,-13,-13,-13,
-            -13,-12, -9, -5
+             0, 3, 4,
+             4, 4, 3,
+             0,-3,-4,
+            -4,-4,-3,
         };
 
         private double mTime = 0.0;
@@ -114,7 +112,7 @@ namespace VVVF {
                 if (CurrentFreq < 0.0) {
                     CurrentFreq = 0.0;
                 }
-                setCarrierFreqIGBT(CurrentFreq);
+                setCarrierFreqGTO(CurrentFreq);
                 if (CurrentFreq < FREQ_AT_MAX_POWER) {
                     CurrentPower = (MIN_POWER + (1.0 - MIN_POWER) * CurrentFreq / FREQ_AT_MAX_POWER) * TargetPower;
                 } else {
@@ -150,9 +148,9 @@ namespace VVVF {
                     iwb -= WAVE.Length;
                 }
 
-                var u = SCALE * CurrentPower * (WAVE[iua] * (1.0 - du) + WAVE[iub] * du) / 15.0;
-                var v = SCALE * CurrentPower * (WAVE[iva] * (1.0 - dv) + WAVE[ivb] * dv) / 15.0;
-                var w = SCALE * CurrentPower * (WAVE[iwa] * (1.0 - dw) + WAVE[iwb] * dw) / 15.0;
+                var u = SCALE * CurrentPower * (WAVE[iua] * (1.0 - du) + WAVE[iub] * du) / 4.75;
+                var v = SCALE * CurrentPower * (WAVE[iva] * (1.0 - dv) + WAVE[ivb] * dv) / 4.75;
+                var w = SCALE * CurrentPower * (WAVE[iwa] * (1.0 - dw) + WAVE[iwb] * dw) / 4.75;
 
                 mIndex += (CurrentFreq * WAVE.Length / SampleRate);
                 if ((WAVE.Length) <= mIndex) {
