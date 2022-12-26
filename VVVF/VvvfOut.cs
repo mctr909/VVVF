@@ -68,7 +68,7 @@ namespace VVVF {
         };
 
         private double mTime = 0.0;
-        private double mCarrierTime = 0.0;
+        private double mCarrierTime = 0;
         private int mIndex = 0;
         private double mU = 0.0;
         private double mV = 0.0;
@@ -112,7 +112,7 @@ namespace VVVF {
                     } else {
                         carrier += mCarrierTime - 1.0;
                     }
-                    mCarrierTime += CarrierFreq / SampleRate;
+                    mCarrierTime += (CarrierFreq / SampleRate);
                     if (1.0 <= mCarrierTime) {
                         mCarrierTime -= 1.0;
                     }
@@ -120,23 +120,25 @@ namespace VVVF {
                     if (1.0 < mTime) {
                         mTime -= 1.0;
                     }
-                    carrier *= 16.0;
-                    var pwmU = carrier < mU ? 1 : -1;
-                    var pwmV = carrier < mV ? 1 : -1;
-                    var pwmW = carrier < mW ? 1 : -1;
-
+                    carrier *= 16.0 * 15;
+                    var pwmU = carrier < mU ? 1 : 0;
+                    var pwmV = carrier < mV ? 1 : 0;
+                    var pwmW = carrier < mW ? 1 : 0;
+                    pwmU -= mU < carrier ? 1 : 0;
+                    pwmV -= mV < carrier ? 1 : 0;
+                    pwmW -= mW < carrier ? 1 : 0;
                     mFu = mFu * (1.0 - Filter) + pwmU * Filter;
                     mFv = mFv * (1.0 - Filter) + pwmV * Filter;
                     mFw = mFw * (1.0 - Filter) + pwmW * Filter;
                 }
 
-                if (0 == i % 128){
+                if (0 == i % 64){
                     if (Math.Abs(TargetFreq - CurrentFreq) < 0.05) {
-                        CurrentFreq += (TargetFreq - CurrentFreq) / SampleRate * 64;
+                        CurrentFreq += (TargetFreq - CurrentFreq) / SampleRate * 32;
                     } else if (CurrentFreq < TargetFreq) {
-                        CurrentFreq += Acc / SampleRate * 64;
+                        CurrentFreq += Acc / SampleRate * 32;
                     } else if (TargetFreq < CurrentFreq) {
-                        CurrentFreq -= Acc / SampleRate * 64;
+                        CurrentFreq -= Acc / SampleRate * 32;
                     }
                     if (CurrentFreq < 0.0) {
                         CurrentFreq = 0.0;
@@ -184,15 +186,15 @@ namespace VVVF {
                     var u = TBL_MUL[amp][TBL_DATA[V_QUANTIZE_VALUE - du][iua]] + TBL_MUL[amp][TBL_DATA[du][iub]];
                     var v = TBL_MUL[amp][TBL_DATA[V_QUANTIZE_VALUE - dv][iva]] + TBL_MUL[amp][TBL_DATA[dv][ivb]];
                     var w = TBL_MUL[amp][TBL_DATA[V_QUANTIZE_VALUE - dw][iwa]] + TBL_MUL[amp][TBL_DATA[dw][iwb]];
-                    mU = (u >> V_QUANTIZE) / 15.0;
-                    mV = (v >> V_QUANTIZE) / 15.0;
-                    mW = (w >> V_QUANTIZE) / 15.0;
+                    mU = u >> V_QUANTIZE;
+                    mV = v >> V_QUANTIZE;
+                    mW = w >> V_QUANTIZE;
 
-                    mIndex += (int)(CurrentFreq * TBL_LENGTH_Q / SampleRate * 64);
+                    mIndex += (int)(CurrentFreq * TBL_LENGTH_Q / SampleRate * 32);
                     if (TBL_LENGTH_Q <= mIndex) {
                         mIndex -= TBL_LENGTH_Q;
                         if (3 == CurrentMode) {
-                            mCarrierTime = 0.5 - 0.125;
+                            mCarrierTime = 0.5;
                         } else {
                             mCarrierTime = 0.0;
                         }
@@ -206,32 +208,32 @@ namespace VVVF {
                 case EDisplayMode.U_V:
                     scopeL = mFu - mFv;
                     scopeR = mFv - mFw;
-                    scopeB = (mU - mV) / 4;
+                    scopeB = (mU - mV) / (15 * 4);
                     break;
                 case EDisplayMode.V_W:
                     scopeL = mFv - mFw;
                     scopeR = mFw - mFu;
-                    scopeB = (mV - mW) / 4;
+                    scopeB = (mV - mW) / (15 * 4);
                     break;
                 case EDisplayMode.W_U:
                     scopeL = mFw - mFu;
                     scopeR = mFu - mFv;
-                    scopeB = (mW - mU) / 4;
+                    scopeB = (mW - mU) / (15 * 4);
                     break;
                 case EDisplayMode.U:
                     scopeL = mFu;
                     scopeR = mFv;
-                    scopeB = mU / 2.0;
+                    scopeB = mU / (15 * 4);
                     break;
                 case EDisplayMode.V:
                     scopeL = mFv;
                     scopeR = mFw;
-                    scopeB = mV / 2.0;
+                    scopeB = mV / (15 * 4);
                     break;
                 case EDisplayMode.W:
                     scopeL = mFw;
                     scopeR = mFu;
-                    scopeB = mW / 2.0;
+                    scopeB = mW / (15 * 4);
                     break;
                 case EDisplayMode.PHASE:
                     scopeL = (2.0 * mFu - mFv - mFw) / 3.0;
@@ -249,7 +251,7 @@ namespace VVVF {
                 if (mScopeIndex < ScopeA.Length) {
                     ScopeA[mScopeIndex] = scopeL;
                     ScopeB[mScopeIndex] = scopeB;
-                    ScopeC[mScopeIndex] = carrier / 4.0;
+                    ScopeC[mScopeIndex] = carrier / (15 * 4);
                     mScopeIndex++;
                 }
                 mWaveBuffer[i] = (short)(32767 * Volume * scopeL);
