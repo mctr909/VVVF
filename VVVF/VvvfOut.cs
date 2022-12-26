@@ -145,7 +145,7 @@ namespace VVVF {
                     if (CurrentFreq < 0.0) {
                         CurrentFreq = 0.0;
                     }
-                    setCarrierFreqGTO(CurrentFreq);
+                    setCarrierFreqIGBT(CurrentFreq);
                     if (CurrentFreq < FREQ_AT_MAX_POWER) {
                         CurrentPower = (MIN_POWER + (1.0 - MIN_POWER) * CurrentFreq / FREQ_AT_MAX_POWER) * TargetPower;
                     } else {
@@ -194,8 +194,6 @@ namespace VVVF {
                         m_index -= TBL_LENGTH_Q;
                         if (3 == CurrentMode) {
                             mCarrierTime = 0.5;
-                        } else {
-                            mCarrierTime = 0.0;
                         }
                     }
                 }
@@ -260,8 +258,8 @@ namespace VVVF {
 
         void setCarrierFreqGTO(double signalFreq) {
             if (signalFreq < 6) {
-                CarrierFreq = 200;
                 CurrentMode = 0;
+                CarrierFreq = 200;
                 return;
             }
             if (signalFreq < 7) {
@@ -282,15 +280,11 @@ namespace VVVF {
 
         void setCarrierFreqIGBT(double signalFreq) {
             if (signalFreq < 50) {
-                CarrierFreq = 1200;
+                CarrierFreq = 1050;
                 CurrentMode = 0;
                 return;
             }
-            if (signalFreq < 100) {
-                CurrentMode = 9;
-            } else {
-                CurrentMode = 3;
-            }
+            CurrentMode = 3;
             if (0 < CurrentMode) {
                 CarrierFreq = signalFreq * CurrentMode;
             }
