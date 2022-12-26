@@ -114,7 +114,7 @@ namespace VVVF {
                     } else {
                         carrier += mCarrierTime - 1.0;
                     }
-                    mCarrierTime += (CarrierFreq / SampleRate);
+                    mCarrierTime += CarrierFreq / SampleRate;
                     if (1.0 <= mCarrierTime) {
                         mCarrierTime -= 1.0;
                     }
