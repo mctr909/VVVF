@@ -112,16 +112,19 @@ namespace VVVF {
                     var pwmU = carrier < mU ? 1 : -1;
                     var pwmV = carrier < mV ? 1 : -1;
                     var pwmW = carrier < mW ? 1 : -1;
+
                     mFu = mFu * (1.0 - Filter) + pwmU * Filter;
                     mFv = mFv * (1.0 - Filter) + pwmV * Filter;
                     mFw = mFw * (1.0 - Filter) + pwmW * Filter;
+                }
 
+                if (0 == i % 128){
                     if (Math.Abs(TargetFreq - CurrentFreq) < 0.05) {
-                        CurrentFreq += (TargetFreq - CurrentFreq) / SampleRate;
+                        CurrentFreq += (TargetFreq - CurrentFreq) / SampleRate * 64;
                     } else if (CurrentFreq < TargetFreq) {
-                        CurrentFreq += Acc / SampleRate;
+                        CurrentFreq += Acc / SampleRate * 64;
                     } else if (TargetFreq < CurrentFreq) {
-                        CurrentFreq -= Acc / SampleRate;
+                        CurrentFreq -= Acc / SampleRate * 64;
                     }
                     if (CurrentFreq < 0.0) {
                         CurrentFreq = 0.0;
@@ -132,9 +135,7 @@ namespace VVVF {
                     } else {
                         CurrentPower = TargetPower;
                     }
-                }
 
-                if (0 == i % 128){
                     var iu = mIndex;
                     var iv = mIndex + TBL_PHASE_V;
                     var iw = mIndex + TBL_PHASE_W;
@@ -170,9 +171,12 @@ namespace VVVF {
                         iwb -= TBL_LENGTH;
                     }
 
-                    mU = ((TBL_DATA[V_QUANTIZE_VALUE - du][iua] + TBL_DATA[du][iub]) >> V_QUANTIZE) * CurrentPower;
-                    mV = ((TBL_DATA[V_QUANTIZE_VALUE - dv][iva] + TBL_DATA[dv][ivb]) >> V_QUANTIZE) * CurrentPower;
-                    mW = ((TBL_DATA[V_QUANTIZE_VALUE - dw][iwa] + TBL_DATA[dw][iwb]) >> V_QUANTIZE) * CurrentPower;
+                    var u = (TBL_DATA[V_QUANTIZE_VALUE - du][iua] + TBL_DATA[du][iub]) >> V_QUANTIZE;
+                    var v = (TBL_DATA[V_QUANTIZE_VALUE - dv][iva] + TBL_DATA[dv][ivb]) >> V_QUANTIZE;
+                    var w = (TBL_DATA[V_QUANTIZE_VALUE - dw][iwa] + TBL_DATA[dw][iwb]) >> V_QUANTIZE;
+                    mU = u * CurrentPower;
+                    mV = v * CurrentPower;
+                    mW = w * CurrentPower;
 
                     mIndex += (int)(CurrentFreq * TBL_LENGTH_Q / SampleRate * 64);
                     if (TBL_LENGTH_Q <= mIndex) {
