@@ -44,16 +44,28 @@ namespace VVVF {
         private const int TBL_LENGTH_Q = TBL_LENGTH << T_QUANTIZE;
 
         private readonly sbyte[][] TBL_DATA = new sbyte[][] {
-        new sbyte[] {
-            0, 0, 0, 0, 0, 0,
-            0, 0, 0, 0, 0, 0
-        }, new sbyte[] {
-            0, 3, 4, 4, 4, 3,
-            0,-3,-4,-4,-4,-3
-        }, new sbyte[] {
-            0, 6, 8, 8, 8, 6,
-            0,-6,-8,-8,-8,-6
-        }};
+            new sbyte[] { 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 },
+            new sbyte[] { 4, 5, 6, 6, 6, 5, 4, 3, 2, 2, 2, 3 },
+            new sbyte[] { 4, 7, 8, 8, 8, 7, 4, 1, 0, 0, 0, 1 }
+        };
+        private readonly sbyte[][] TBL_MUL = new sbyte[][] {
+            new sbyte[] {   0,   0,   0,   0, 0,  0,  0,  0,   0 },
+            new sbyte[] {  -8,  -6,  -4,  -3, 0,  3,  4,  6,   8 },
+            new sbyte[] { -16, -12,  -8,  -6, 0,  6,  8, 12,  16 },
+            new sbyte[] { -24, -18, -12,  -9, 0,  9, 12, 18,  24 },
+            new sbyte[] { -32, -24, -16, -12, 0, 12, 16, 24,  32 },
+            new sbyte[] { -40, -30, -20, -15, 0, 15, 20, 30,  40 },
+            new sbyte[] { -48, -36, -24, -18, 0, 18, 24, 36,  48 },
+            new sbyte[] { -56, -42, -28, -21, 0, 21, 28, 42,  56 },
+            new sbyte[] { -64, -48, -32, -24, 0, 24, 32, 48,  64 },
+            new sbyte[] { -72, -54, -36, -27, 0, 27, 36, 54,  72 },
+            new sbyte[] { -80, -60, -40, -30, 0, 30, 40, 60,  80 },
+            new sbyte[] { -88, -66, -44, -33, 0, 33, 44, 66,  88 },
+            new sbyte[] { -96, -72, -48, -36, 0, 36, 48, 72,  96 },
+            new sbyte[] {-104, -78, -52, -39, 0, 39, 52, 78, 104 },
+            new sbyte[] {-112, -84, -56, -42, 0, 42, 56, 84, 112 },
+            new sbyte[] {-120, -90, -60, -45, 0, 45, 60, 90, 120 }
+        };
 
         private double mTime = 0.0;
         private double mCarrierTime = 0.0;
@@ -152,9 +164,6 @@ namespace VVVF {
                     dv >>= TV_QUANTIZE;
                     dw >>= TV_QUANTIZE;
 
-                    if (TBL_LENGTH <= iua) {
-                        iua -= TBL_LENGTH;
-                    }
                     if (TBL_LENGTH <= iub) {
                         iub -= TBL_LENGTH;
                     }
@@ -171,12 +180,13 @@ namespace VVVF {
                         iwb -= TBL_LENGTH;
                     }
 
-                    var u = (TBL_DATA[V_QUANTIZE_VALUE - du][iua] + TBL_DATA[du][iub]) >> V_QUANTIZE;
-                    var v = (TBL_DATA[V_QUANTIZE_VALUE - dv][iva] + TBL_DATA[dv][ivb]) >> V_QUANTIZE;
-                    var w = (TBL_DATA[V_QUANTIZE_VALUE - dw][iwa] + TBL_DATA[dw][iwb]) >> V_QUANTIZE;
-                    mU = u * CurrentPower;
-                    mV = v * CurrentPower;
-                    mW = w * CurrentPower;
+                    var amp = (int)(CurrentPower * 15);
+                    var u = TBL_MUL[amp][TBL_DATA[V_QUANTIZE_VALUE - du][iua]] + TBL_MUL[amp][TBL_DATA[du][iub]];
+                    var v = TBL_MUL[amp][TBL_DATA[V_QUANTIZE_VALUE - dv][iva]] + TBL_MUL[amp][TBL_DATA[dv][ivb]];
+                    var w = TBL_MUL[amp][TBL_DATA[V_QUANTIZE_VALUE - dw][iwa]] + TBL_MUL[amp][TBL_DATA[dw][iwb]];
+                    mU = (u >> V_QUANTIZE) / 15.0;
+                    mV = (v >> V_QUANTIZE) / 15.0;
+                    mW = (w >> V_QUANTIZE) / 15.0;
 
                     mIndex += (int)(CurrentFreq * TBL_LENGTH_Q / SampleRate * 64);
                     if (TBL_LENGTH_Q <= mIndex) {
