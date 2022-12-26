@@ -33,7 +33,7 @@ namespace VVVF {
         private const double MIN_POWER = 0.05;
         private const double FREQ_AT_MAX_POWER = 50.0;
 
-        private const int T_QUANTIZE = 12;
+        private const int T_QUANTIZE = 11;
         private const int V_QUANTIZE = 1;
         private const int TV_QUANTIZE = T_QUANTIZE - V_QUANTIZE;
         private const int TBL_LENGTH = 12;
@@ -49,30 +49,32 @@ namespace VVVF {
             new sbyte[] { 4, 7, 8, 8, 8, 7, 4, 1, 0, 0, 0, 1 }
         };
         private readonly sbyte[][] TBL_MUL = new sbyte[][] {
-            new sbyte[] {   0,   0,   0,   0, 0,  0,  0,  0,   0 },
-            new sbyte[] {  -8,  -6,  -4,  -3, 0,  3,  4,  6,   8 },
-            new sbyte[] { -16, -12,  -8,  -6, 0,  6,  8, 12,  16 },
-            new sbyte[] { -24, -18, -12,  -9, 0,  9, 12, 18,  24 },
-            new sbyte[] { -32, -24, -16, -12, 0, 12, 16, 24,  32 },
-            new sbyte[] { -40, -30, -20, -15, 0, 15, 20, 30,  40 },
-            new sbyte[] { -48, -36, -24, -18, 0, 18, 24, 36,  48 },
-            new sbyte[] { -56, -42, -28, -21, 0, 21, 28, 42,  56 },
-            new sbyte[] { -64, -48, -32, -24, 0, 24, 32, 48,  64 },
-            new sbyte[] { -72, -54, -36, -27, 0, 27, 36, 54,  72 },
-            new sbyte[] { -80, -60, -40, -30, 0, 30, 40, 60,  80 },
-            new sbyte[] { -88, -66, -44, -33, 0, 33, 44, 66,  88 },
-            new sbyte[] { -96, -72, -48, -36, 0, 36, 48, 72,  96 },
-            new sbyte[] {-104, -78, -52, -39, 0, 39, 52, 78, 104 },
-            new sbyte[] {-112, -84, -56, -42, 0, 42, 56, 84, 112 },
-            new sbyte[] {-120, -90, -60, -45, 0, 45, 60, 90, 120 }
+            new sbyte[] {    0,   0,   0,   0, 0,  0,  0,  0,   0 },
+            new sbyte[] {   -8,  -6,  -4,  -3, 0,  3,  4,  6,   8 },
+            new sbyte[] {  -16, -12,  -8,  -6, 0,  6,  8, 12,  16 },
+            new sbyte[] {  -24, -18, -12,  -9, 0,  9, 12, 18,  24 },
+            new sbyte[] {  -32, -24, -16, -12, 0, 12, 16, 24,  32 },
+            new sbyte[] {  -40, -30, -20, -15, 0, 15, 20, 30,  40 },
+            new sbyte[] {  -48, -36, -24, -18, 0, 18, 24, 36,  48 },
+            new sbyte[] {  -56, -42, -28, -21, 0, 21, 28, 42,  56 },
+            new sbyte[] {  -64, -48, -32, -24, 0, 24, 32, 48,  64 },
+            new sbyte[] {  -72, -54, -36, -27, 0, 27, 36, 54,  72 },
+            new sbyte[] {  -80, -60, -40, -30, 0, 30, 40, 60,  80 },
+            new sbyte[] {  -88, -66, -44, -33, 0, 33, 44, 66,  88 },
+            new sbyte[] {  -96, -72, -48, -36, 0, 36, 48, 72,  96 },
+            new sbyte[] { -104, -78, -52, -39, 0, 39, 52, 78, 104 },
+            new sbyte[] { -112, -84, -56, -42, 0, 42, 56, 84, 112 },
+            new sbyte[] { -120, -90, -60, -45, 0, 45, 60, 90, 120 }
         };
 
+        private int m_index = 0;
+        private int m_amp = 0;
+        private int m_u = 0;
+        private int m_v = 0;
+        private int m_w = 0;
+
         private double mTime = 0.0;
-        private double mCarrierTime = 0;
-        private int mIndex = 0;
-        private double mU = 0.0;
-        private double mV = 0.0;
-        private double mW = 0.0;
+        private double mCarrierTime = 0.0;
 
         private double mFu = 0.0;
         private double mFv = 0.0;
@@ -121,12 +123,12 @@ namespace VVVF {
                         mTime -= 1.0;
                     }
                     carrier *= 16.0 * 15;
-                    var pwmU = carrier < mU ? 1 : 0;
-                    var pwmV = carrier < mV ? 1 : 0;
-                    var pwmW = carrier < mW ? 1 : 0;
-                    pwmU -= mU < carrier ? 1 : 0;
-                    pwmV -= mV < carrier ? 1 : 0;
-                    pwmW -= mW < carrier ? 1 : 0;
+                    var pwmU = carrier < m_u ? 1 : 0;
+                    var pwmV = carrier < m_v ? 1 : 0;
+                    var pwmW = carrier < m_w ? 1 : 0;
+                    pwmU -= m_u < carrier ? 1 : 0;
+                    pwmV -= m_v < carrier ? 1 : 0;
+                    pwmW -= m_w < carrier ? 1 : 0;
                     mFu = mFu * (1.0 - Filter) + pwmU * Filter;
                     mFv = mFv * (1.0 - Filter) + pwmV * Filter;
                     mFw = mFw * (1.0 - Filter) + pwmW * Filter;
@@ -149,22 +151,20 @@ namespace VVVF {
                     } else {
                         CurrentPower = TargetPower;
                     }
+                    m_amp = (int)(CurrentPower * 15);
 
-                    var iu = mIndex;
-                    var iv = mIndex + TBL_PHASE_V;
-                    var iw = mIndex + TBL_PHASE_W;
+                    var iu = m_index;
+                    var iv = m_index + TBL_PHASE_V;
+                    var iw = m_index + TBL_PHASE_W;
                     var iua = iu >> T_QUANTIZE;
                     var iva = iv >> T_QUANTIZE;
                     var iwa = iw >> T_QUANTIZE;
                     var iub = iua + 1;
                     var ivb = iva + 1;
                     var iwb = iwa + 1;
-                    var du = iu - (iua << T_QUANTIZE);
-                    var dv = iv - (iva << T_QUANTIZE);
-                    var dw = iw - (iwa << T_QUANTIZE);
-                    du >>= TV_QUANTIZE;
-                    dv >>= TV_QUANTIZE;
-                    dw >>= TV_QUANTIZE;
+                    var du = (iu - (iua << T_QUANTIZE)) >> TV_QUANTIZE;
+                    var dv = (iv - (iva << T_QUANTIZE)) >> TV_QUANTIZE;
+                    var dw = (iw - (iwa << T_QUANTIZE)) >> TV_QUANTIZE;
 
                     if (TBL_LENGTH <= iub) {
                         iub -= TBL_LENGTH;
@@ -182,17 +182,16 @@ namespace VVVF {
                         iwb -= TBL_LENGTH;
                     }
 
-                    var amp = (int)(CurrentPower * 15);
-                    var u = TBL_MUL[amp][TBL_DATA[V_QUANTIZE_VALUE - du][iua]] + TBL_MUL[amp][TBL_DATA[du][iub]];
-                    var v = TBL_MUL[amp][TBL_DATA[V_QUANTIZE_VALUE - dv][iva]] + TBL_MUL[amp][TBL_DATA[dv][ivb]];
-                    var w = TBL_MUL[amp][TBL_DATA[V_QUANTIZE_VALUE - dw][iwa]] + TBL_MUL[amp][TBL_DATA[dw][iwb]];
-                    mU = u >> V_QUANTIZE;
-                    mV = v >> V_QUANTIZE;
-                    mW = w >> V_QUANTIZE;
+                    var u = (TBL_MUL[m_amp][TBL_DATA[V_QUANTIZE_VALUE - du][iua]] + TBL_MUL[m_amp][TBL_DATA[du][iub]]) >> V_QUANTIZE;
+                    var v = (TBL_MUL[m_amp][TBL_DATA[V_QUANTIZE_VALUE - dv][iva]] + TBL_MUL[m_amp][TBL_DATA[dv][ivb]]) >> V_QUANTIZE;
+                    var w = (TBL_MUL[m_amp][TBL_DATA[V_QUANTIZE_VALUE - dw][iwa]] + TBL_MUL[m_amp][TBL_DATA[dw][iwb]]) >> V_QUANTIZE;
+                    m_u = u;
+                    m_v = v;
+                    m_w = w;
 
-                    mIndex += (int)(CurrentFreq * TBL_LENGTH_Q / SampleRate * 32);
-                    if (TBL_LENGTH_Q <= mIndex) {
-                        mIndex -= TBL_LENGTH_Q;
+                    m_index += (int)(CurrentFreq * TBL_LENGTH_Q / SampleRate * 32);
+                    if (TBL_LENGTH_Q <= m_index) {
+                        m_index -= TBL_LENGTH_Q;
                         if (3 == CurrentMode) {
                             mCarrierTime = 0.5;
                         } else {
@@ -208,32 +207,32 @@ namespace VVVF {
                 case EDisplayMode.U_V:
                     scopeL = mFu - mFv;
                     scopeR = mFv - mFw;
-                    scopeB = (mU - mV) / (15 * 4);
+                    scopeB = (m_u - m_v) / (15 * 4.0);
                     break;
                 case EDisplayMode.V_W:
                     scopeL = mFv - mFw;
                     scopeR = mFw - mFu;
-                    scopeB = (mV - mW) / (15 * 4);
+                    scopeB = (m_v - m_w) / (15 * 4.0);
                     break;
                 case EDisplayMode.W_U:
                     scopeL = mFw - mFu;
                     scopeR = mFu - mFv;
-                    scopeB = (mW - mU) / (15 * 4);
+                    scopeB = (m_w - m_u) / (15 * 4.0);
                     break;
                 case EDisplayMode.U:
                     scopeL = mFu;
                     scopeR = mFv;
-                    scopeB = mU / (15 * 4);
+                    scopeB = m_u / (15 * 4.0);
                     break;
                 case EDisplayMode.V:
                     scopeL = mFv;
                     scopeR = mFw;
-                    scopeB = mV / (15 * 4);
+                    scopeB = m_v / (15 * 4.0);
                     break;
                 case EDisplayMode.W:
                     scopeL = mFw;
                     scopeR = mFu;
-                    scopeB = mW / (15 * 4);
+                    scopeB = m_w / (15 * 4.0);
                     break;
                 case EDisplayMode.PHASE:
                     scopeL = (2.0 * mFu - mFv - mFw) / 3.0;
