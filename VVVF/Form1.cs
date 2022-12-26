@@ -14,6 +14,7 @@ namespace VVVF {
         private DoubleBufferGraphic mWaveGraph;
         private float mScopeA = 0.0f;
         private float mScopeB = 0.0f;
+        private float mScopeC = 0.0f;
 
         private void Form1_Load(object sender, EventArgs e) {
             mWaveOut = new VvvfOut(SCOPE_SPEED * picWave.Width);
@@ -143,19 +144,40 @@ namespace VVVF {
                 graph.DrawLine(Pens.Gray, 0, bottom, picWave.Width, bottom);
                 mScopeA = neutralLevel - (float)(mWaveOut.ScopeA[0] * maxAmp * scale);
                 mScopeB = neutralLevel - (float)(mWaveOut.ScopeB[0] * maxAmp * scale);
+                mScopeC = neutralLevel - (float)(mWaveOut.ScopeC[0] * maxAmp * scale);
                 for (int i = 1, s = 0; s < picWave.Width; i += SCOPE_SPEED, s++) {
-                    var sumA = 0.0f;
-                    var sumB = 0.0f;
+                    float maxA = -10.0f, minA = 10.0f;
+                    float maxB = -10.0f, minB = 10.0f;
+                    float maxC = -10.0f, minC = 10.0f;
                     for (int j = i; j < i + SCOPE_SPEED && j < mWaveOut.ScopeA.Length; j++) {
-                        sumA += (float)mWaveOut.ScopeA[j];
-                        sumB += (float)mWaveOut.ScopeB[j];
+                        maxA = Math.Max(maxA, (float)mWaveOut.ScopeA[j]);
+                        maxB = Math.Max(maxB, (float)mWaveOut.ScopeB[j]);
+                        maxC = Math.Max(maxC, (float)mWaveOut.ScopeC[j]);
+                        minA = Math.Min(minA, (float)mWaveOut.ScopeA[j]);
+                        minB = Math.Min(minB, (float)mWaveOut.ScopeB[j]);
+                        minC = Math.Min(minC, (float)mWaveOut.ScopeC[j]);
                     }
-                    sumA = neutralLevel - sumA * maxAmp * scale / SCOPE_SPEED;
-                    sumB = neutralLevel - sumB * maxAmp * scale / SCOPE_SPEED;
-                    graph.DrawLine(Pens.Green, s, mScopeA, s + 1, sumA);
-                    graph.DrawLine(Pens.DeepSkyBlue, s, mScopeB, s + 1, sumB);
-                    mScopeA = sumA;
-                    mScopeB = sumB;
+                    if (-minA < maxA) {
+                        maxA = neutralLevel - maxA * maxAmp * scale;
+                    } else {
+                        maxA = neutralLevel - minA * maxAmp * scale;
+                    }
+                    if (-minB < maxB) {
+                        maxB = neutralLevel - maxB * maxAmp * scale;
+                    } else {
+                        maxB = neutralLevel - minB * maxAmp * scale;
+                    }
+                    if (-minC < maxC) {
+                        maxC = neutralLevel - maxC * maxAmp * scale;
+                    } else {
+                        maxC = neutralLevel - minC * maxAmp * scale;
+                    }
+                    graph.DrawLine(Pens.Green, s, mScopeA, s + 1, maxA);
+                    graph.DrawLine(Pens.DeepSkyBlue, s, mScopeB, s + 1, maxB);
+                    graph.DrawLine(Pens.Navy, s, mScopeC, s + 1, maxC);
+                    mScopeA = maxA;
+                    mScopeB = maxB;
+                    mScopeC = maxC;
                 }
                 graph.DrawLine(Pens.Red, 0, neutralLevel, picWave.Width, neutralLevel);
             }

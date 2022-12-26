@@ -277,7 +277,7 @@
             this.picWave.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picWave.Location = new System.Drawing.Point(8, 125);
             this.picWave.Name = "picWave";
-            this.picWave.Size = new System.Drawing.Size(453, 115);
+            this.picWave.Size = new System.Drawing.Size(453, 241);
             this.picWave.TabIndex = 6;
             this.picWave.TabStop = false;
             // 
