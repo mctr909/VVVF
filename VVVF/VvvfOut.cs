@@ -33,15 +33,16 @@ namespace VVVF {
         private const double MIN_POWER = 0.05;
         private const double FREQ_AT_MAX_POWER = 50.0;
 
-        private const int T_QUANTIZE = 11;
-        private const int V_QUANTIZE = 1;
-        private const int TV_QUANTIZE = T_QUANTIZE - V_QUANTIZE;
-        private const int TBL_LENGTH = 12;
-        private const int TBL_PHASE_V = 4 << T_QUANTIZE;
-        private const int TBL_PHASE_W = 8 << T_QUANTIZE;
+        private const byte T_QUANTIZE = 11;
+        private const byte V_QUANTIZE = 1;
+        private const byte TV_QUANTIZE = T_QUANTIZE - V_QUANTIZE;
+        private const byte TBL_LENGTH = 12;
+        private const byte TBL_END = TBL_LENGTH - 1;
+        private const short TBL_PHASE_V = 4 << T_QUANTIZE;
+        private const short TBL_PHASE_W = 8 << T_QUANTIZE;
 
-        private const int V_QUANTIZE_VALUE = 1 << V_QUANTIZE;
-        private const int TBL_LENGTH_Q = TBL_LENGTH << T_QUANTIZE;
+        private const short V_QUANTIZE_VALUE = 1 << V_QUANTIZE;
+        private const short TBL_LENGTH_Q = TBL_LENGTH << T_QUANTIZE;
 
         private readonly sbyte[][] TBL_DATA = new sbyte[][] {
             new sbyte[] { 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 },
@@ -67,7 +68,7 @@ namespace VVVF {
             new sbyte[] { -120, -90, -60, -45, 0, 45, 60, 90, 120 }
         };
 
-        private int m_index = 0;
+        private short m_index = 0;
         private int m_amp = 0;
         private int m_u = 0;
         private int m_v = 0;
@@ -122,7 +123,7 @@ namespace VVVF {
                     if (1.0 < mTime) {
                         mTime -= 1.0;
                     }
-                    carrier *= 16.0 * 15;
+                    carrier *= 4.0 * 4 * 15;
                     var pwmU = carrier < m_u ? 1 : 0;
                     var pwmV = carrier < m_v ? 1 : 0;
                     var pwmW = carrier < m_w ? 1 : 0;
@@ -134,13 +135,13 @@ namespace VVVF {
                     mFw = mFw * (1.0 - Filter) + pwmW * Filter;
                 }
 
-                if (0 == i % 64){
+                {
                     if (Math.Abs(TargetFreq - CurrentFreq) < 0.05) {
-                        CurrentFreq += (TargetFreq - CurrentFreq) / SampleRate * 32;
+                        CurrentFreq += (TargetFreq - CurrentFreq) / SampleRate;
                     } else if (CurrentFreq < TargetFreq) {
-                        CurrentFreq += Acc / SampleRate * 32;
+                        CurrentFreq += Acc / SampleRate;
                     } else if (TargetFreq < CurrentFreq) {
-                        CurrentFreq -= Acc / SampleRate * 32;
+                        CurrentFreq -= Acc / SampleRate;
                     }
                     if (CurrentFreq < 0.0) {
                         CurrentFreq = 0.0;
@@ -151,45 +152,37 @@ namespace VVVF {
                     } else {
                         CurrentPower = TargetPower;
                     }
+                }
+
+                if (0 == i % 64) {
                     m_amp = (int)(CurrentPower * 15);
 
-                    var iu = m_index;
                     var iv = m_index + TBL_PHASE_V;
                     var iw = m_index + TBL_PHASE_W;
-                    var iua = iu >> T_QUANTIZE;
-                    var iva = iv >> T_QUANTIZE;
-                    var iwa = iw >> T_QUANTIZE;
-                    var iub = iua + 1;
-                    var ivb = iva + 1;
-                    var iwb = iwa + 1;
-                    var du = (iu - (iua << T_QUANTIZE)) >> TV_QUANTIZE;
-                    var dv = (iv - (iva << T_QUANTIZE)) >> TV_QUANTIZE;
-                    var dw = (iw - (iwa << T_QUANTIZE)) >> TV_QUANTIZE;
+                    var iu0 = m_index >> T_QUANTIZE;
+                    var iv0 = iv >> T_QUANTIZE;
+                    var iw0 = iw >> T_QUANTIZE;
+                    var du = (m_index - (iu0 << T_QUANTIZE)) >> TV_QUANTIZE;
+                    var dv = (iv - (iv0 << T_QUANTIZE)) >> TV_QUANTIZE;
+                    var dw = (iw - (iw0 << T_QUANTIZE)) >> TV_QUANTIZE;
+                    if (TBL_LENGTH <= iv0) {
+                        iv0 -= TBL_LENGTH;
+                    }
+                    if (TBL_LENGTH <= iw0) {
+                        iw0 -= TBL_LENGTH;
+                    }
+                    var iu1 = (TBL_END == iu0) ? 0 : (iu0 + 1);
+                    var iv1 = (TBL_END == iv0) ? 0 : (iv0 + 1);
+                    var iw1 = (TBL_END == iw0) ? 0 : (iw0 + 1);
 
-                    if (TBL_LENGTH <= iub) {
-                        iub -= TBL_LENGTH;
-                    }
-                    if (TBL_LENGTH <= iva) {
-                        iva -= TBL_LENGTH;
-                    }
-                    if (TBL_LENGTH <= ivb) {
-                        ivb -= TBL_LENGTH;
-                    }
-                    if (TBL_LENGTH <= iwa) {
-                        iwa -= TBL_LENGTH;
-                    }
-                    if (TBL_LENGTH <= iwb) {
-                        iwb -= TBL_LENGTH;
-                    }
-
-                    var u = (TBL_MUL[m_amp][TBL_DATA[V_QUANTIZE_VALUE - du][iua]] + TBL_MUL[m_amp][TBL_DATA[du][iub]]) >> V_QUANTIZE;
-                    var v = (TBL_MUL[m_amp][TBL_DATA[V_QUANTIZE_VALUE - dv][iva]] + TBL_MUL[m_amp][TBL_DATA[dv][ivb]]) >> V_QUANTIZE;
-                    var w = (TBL_MUL[m_amp][TBL_DATA[V_QUANTIZE_VALUE - dw][iwa]] + TBL_MUL[m_amp][TBL_DATA[dw][iwb]]) >> V_QUANTIZE;
+                    var u = (TBL_MUL[m_amp][TBL_DATA[V_QUANTIZE_VALUE - du][iu0]] + TBL_MUL[m_amp][TBL_DATA[du][iu1]]) >> V_QUANTIZE;
+                    var v = (TBL_MUL[m_amp][TBL_DATA[V_QUANTIZE_VALUE - dv][iv0]] + TBL_MUL[m_amp][TBL_DATA[dv][iv1]]) >> V_QUANTIZE;
+                    var w = (TBL_MUL[m_amp][TBL_DATA[V_QUANTIZE_VALUE - dw][iw0]] + TBL_MUL[m_amp][TBL_DATA[dw][iw1]]) >> V_QUANTIZE;
                     m_u = u;
                     m_v = v;
                     m_w = w;
 
-                    m_index += (int)(CurrentFreq * TBL_LENGTH_Q / SampleRate * 32);
+                    m_index += (short)(CurrentFreq * TBL_LENGTH_Q / SampleRate * 32);
                     if (TBL_LENGTH_Q <= m_index) {
                         m_index -= TBL_LENGTH_Q;
                         if (3 == CurrentMode) {
