@@ -40,18 +40,18 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.lblMode = new System.Windows.Forms.Label();
             this.trbFilter = new System.Windows.Forms.TrackBar();
+            this.label5 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
+            this.trbVolume = new System.Windows.Forms.TrackBar();
             this.cmbDisplayMode = new System.Windows.Forms.ComboBox();
-            this.picWave = new System.Windows.Forms.PictureBox();
             this.lblCarrierFreq = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.lblOutputPower = new System.Windows.Forms.Label();
             this.lblOutputFreq = new System.Windows.Forms.Label();
+            this.picWave = new System.Windows.Forms.PictureBox();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.trbVolume = new System.Windows.Forms.TrackBar();
-            this.label5 = new System.Windows.Forms.Label();
             this.colorDialog1 = new System.Windows.Forms.ColorDialog();
             ((System.ComponentModel.ISupportInitialize)(this.trbTargetFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trbAcc)).BeginInit();
@@ -59,8 +59,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.trbPower)).BeginInit();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trbFilter)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picWave)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trbVolume)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picWave)).BeginInit();
             this.SuspendLayout();
             // 
             // btnPlayStop
@@ -248,6 +248,15 @@
             this.trbFilter.Value = -24;
             this.trbFilter.Scroll += new System.EventHandler(this.trbFilter_Scroll);
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(6, 115);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(29, 12);
+            this.label5.TabIndex = 12;
+            this.label5.Text = "音量";
+            // 
             // label9
             // 
             this.label9.AutoSize = true;
@@ -257,31 +266,35 @@
             this.label9.TabIndex = 15;
             this.label9.Text = "フィルター";
             // 
+            // trbVolume
+            // 
+            this.trbVolume.Location = new System.Drawing.Point(6, 130);
+            this.trbVolume.Maximum = -18;
+            this.trbVolume.Minimum = -72;
+            this.trbVolume.Name = "trbVolume";
+            this.trbVolume.Size = new System.Drawing.Size(426, 45);
+            this.trbVolume.TabIndex = 11;
+            this.trbVolume.TickFrequency = 6;
+            this.trbVolume.Value = -48;
+            this.trbVolume.Scroll += new System.EventHandler(this.trbVolume_Scroll);
+            // 
             // cmbDisplayMode
             // 
             this.cmbDisplayMode.FormattingEnabled = true;
             this.cmbDisplayMode.Items.AddRange(new object[] {
-            "U相-V相",
-            "V相-W相",
-            "W相-U相",
-            "U相",
-            "V相",
-            "W相",
+            "U-V, V-W, W-U",
+            "U-V",
+            "V-W",
+            "W-U",
+            "U",
+            "V",
+            "W",
             "位相"});
-            this.cmbDisplayMode.Location = new System.Drawing.Point(328, 29);
+            this.cmbDisplayMode.Location = new System.Drawing.Point(308, 26);
             this.cmbDisplayMode.Name = "cmbDisplayMode";
-            this.cmbDisplayMode.Size = new System.Drawing.Size(96, 20);
+            this.cmbDisplayMode.Size = new System.Drawing.Size(116, 20);
             this.cmbDisplayMode.TabIndex = 14;
             this.cmbDisplayMode.SelectedIndexChanged += new System.EventHandler(this.cmbDisplayMode_SelectedIndexChanged);
-            // 
-            // picWave
-            // 
-            this.picWave.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picWave.Location = new System.Drawing.Point(12, 234);
-            this.picWave.Name = "picWave";
-            this.picWave.Size = new System.Drawing.Size(882, 271);
-            this.picWave.TabIndex = 6;
-            this.picWave.TabStop = false;
             // 
             // lblCarrierFreq
             // 
@@ -340,30 +353,18 @@
             this.lblOutputFreq.TabIndex = 0;
             this.lblOutputFreq.Text = "000.0Hz";
             // 
+            // picWave
+            // 
+            this.picWave.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picWave.Location = new System.Drawing.Point(12, 234);
+            this.picWave.Name = "picWave";
+            this.picWave.Size = new System.Drawing.Size(882, 271);
+            this.picWave.TabIndex = 6;
+            this.picWave.TabStop = false;
+            // 
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
-            // 
-            // trbVolume
-            // 
-            this.trbVolume.Location = new System.Drawing.Point(6, 130);
-            this.trbVolume.Maximum = -18;
-            this.trbVolume.Minimum = -72;
-            this.trbVolume.Name = "trbVolume";
-            this.trbVolume.Size = new System.Drawing.Size(426, 45);
-            this.trbVolume.TabIndex = 11;
-            this.trbVolume.TickFrequency = 6;
-            this.trbVolume.Value = -48;
-            this.trbVolume.Scroll += new System.EventHandler(this.trbVolume_Scroll);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(6, 115);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(29, 12);
-            this.label5.TabIndex = 12;
-            this.label5.Text = "音量";
             // 
             // Form1
             // 
@@ -384,8 +385,8 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trbFilter)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picWave)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trbVolume)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picWave)).EndInit();
             this.ResumeLayout(false);
 
         }

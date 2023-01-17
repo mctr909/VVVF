@@ -8,7 +8,7 @@ namespace VVVF {
             InitializeComponent();
         }
 
-        private const int SCOPE_SPEED = 32;
+        private const int SCOPE_SPEED = 8;
 
         private VvvfOut mWaveOut;
         private DoubleBufferGraphic mWaveGraph;
@@ -83,24 +83,27 @@ namespace VVVF {
         private void cmbDisplayMode_SelectedIndexChanged(object sender, EventArgs e) {
             switch (cmbDisplayMode.SelectedIndex) {
             case 0:
-                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.U_V;
+                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.UVW;
                 break;
             case 1:
-                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.V_W;
+                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.U_V;
                 break;
             case 2:
-                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.W_U;
+                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.V_W;
                 break;
             case 3:
-                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.U;
+                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.W_U;
                 break;
             case 4:
-                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.V;
+                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.U;
                 break;
             case 5:
-                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.W;
+                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.V;
                 break;
             case 6:
+                mWaveOut.DisplayMode = VvvfOut.EDisplayMode.W;
+                break;
+            case 7:
                 mWaveOut.DisplayMode = VvvfOut.EDisplayMode.PHASE;
                 break;
             }
