@@ -105,7 +105,7 @@
             // trbAcc
             // 
             this.trbAcc.Location = new System.Drawing.Point(6, 108);
-            this.trbAcc.Maximum = 100;
+            this.trbAcc.Maximum = 500;
             this.trbAcc.Name = "trbAcc";
             this.trbAcc.Size = new System.Drawing.Size(320, 45);
             this.trbAcc.TabIndex = 4;

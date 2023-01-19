@@ -31,8 +31,8 @@ namespace VVVF {
         public double[] ScopeB;
         public double[] ScopeC;
 
-        private const double MIN_POWER = 0.05;
-        private const double FREQ_AT_MAX_POWER = 10.0;
+        private const double MIN_POWER = 0.1;
+        private const double FREQ_AT_MAX_POWER = 20.0;
 
         private const byte T_QUANTIZE = 11;
         private const byte TBL_LENGTH = 12;
@@ -134,12 +134,9 @@ namespace VVVF {
                         mTime -= 1.0;
                     }
                     carrier *= 4.0 * 4 * 31;
-                    var pwmU = carrier < m_u ? 1 : 0;
-                    var pwmV = carrier < m_v ? 1 : 0;
-                    var pwmW = carrier < m_w ? 1 : 0;
-                    pwmU -= m_u < carrier ? 1 : 0;
-                    pwmV -= m_v < carrier ? 1 : 0;
-                    pwmW -= m_w < carrier ? 1 : 0;
+                    var pwmU = carrier < m_u ? 1 : -1;
+                    var pwmV = carrier < m_v ? 1 : -1;
+                    var pwmW = carrier < m_w ? 1 : -1;
                     mFu = mFu * (1.0 - Filter) + pwmU * Filter;
                     mFv = mFv * (1.0 - Filter) + pwmV * Filter;
                     mFw = mFw * (1.0 - Filter) + pwmW * Filter;
@@ -184,7 +181,9 @@ namespace VVVF {
                     if (TBL_LENGTH_Q <= m_index) {
                         m_index -= TBL_LENGTH_Q;
                         if (3 == CurrentMode) {
-                            mCarrierTime = 0.5;
+                            //mCarrierTime = 5 / 16.0;
+                        } else {
+                            //mCarrierTime = 0.0;
                         }
                     }
                 }
@@ -277,7 +276,7 @@ namespace VVVF {
         }
 
         void setCarrierFreqIGBT(double signalFreq) {
-            CarrierFreq = 3000;
+            CarrierFreq = 2000;
             CurrentMode = 0;
         }
     }
