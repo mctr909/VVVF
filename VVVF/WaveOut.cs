@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace WinMM {
     public class WaveOut : IDisposable {
@@ -58,6 +60,17 @@ namespace WinMM {
             mWaveBuffer = new short[BufferSize];
 
             WaveOutOpen();
+        }
+
+        public void StartTask() {
+            new Task(loop).Start();
+        }
+
+        void loop() {
+            while(true) {
+                SetData();
+                Thread.Sleep(1);
+            }
         }
 
         public void Dispose() {

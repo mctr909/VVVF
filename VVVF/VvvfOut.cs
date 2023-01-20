@@ -1,5 +1,4 @@
 ﻿using System;
-
 using WinMM;
 
 namespace VVVF {
@@ -35,54 +34,53 @@ namespace VVVF {
         private const double FREQ_AT_MAX_POWER = 20.0;
 
         private const byte T_QUANTIZE = 11;
-        private const byte TBL_LENGTH = 12;
-        private const short TBL_PHASE_V = 4 << T_QUANTIZE;
-        private const short TBL_PHASE_W = 8 << T_QUANTIZE;
-        private const short TBL_LENGTH_Q = TBL_LENGTH << T_QUANTIZE;
+        private const byte WAVE_STEPS = 12;
+        private const short PHASE_V = 4;
+        private const short PHASE_W = 8;
+        private const short COUNTER_LENGTH = WAVE_STEPS << T_QUANTIZE;
 
-        private readonly sbyte[] TBL_DATA = new sbyte[] {
+        private readonly byte[] TBL_DATA = new byte[] {
             2, 3, 4, 4, 4, 3, 2, 1, 0, 0, 0, 1
         };
-        private readonly sbyte[][] TBL_MUL = new sbyte[][] {
-            new sbyte[] {    0,   0, 0,  0,   0 },
-            new sbyte[] {   -4,  -3, 0,  3,   4 },
-            new sbyte[] {   -8,  -6, 0,  6,   8 },
-            new sbyte[] {  -12,  -9, 0,  9,  12 },
-            new sbyte[] {  -16, -12, 0, 12,  16 },
-            new sbyte[] {  -20, -15, 0, 15,  20 },
-            new sbyte[] {  -24, -18, 0, 18,  24 },
-            new sbyte[] {  -28, -21, 0, 21,  28 },
-            new sbyte[] {  -32, -24, 0, 24,  32 },
-            new sbyte[] {  -36, -27, 0, 27,  36 },
-            new sbyte[] {  -40, -30, 0, 30,  40 },
-            new sbyte[] {  -44, -33, 0, 33,  44 },
-            new sbyte[] {  -48, -36, 0, 36,  48 },
-            new sbyte[] {  -52, -39, 0, 39,  52 },
-            new sbyte[] {  -56, -42, 0, 42,  56 },
-            new sbyte[] {  -60, -45, 0, 45,  60 },
-            new sbyte[] {  -64, -48, 0, 48,  64 },
-            new sbyte[] {  -68, -51, 0, 51,  68 },
-            new sbyte[] {  -72, -54, 0, 54,  72 },
-            new sbyte[] {  -76, -57, 0, 57,  76 },
-            new sbyte[] {  -80, -60, 0, 60,  80 },
-            new sbyte[] {  -84, -63, 0, 63,  84 },
-            new sbyte[] {  -88, -66, 0, 66,  88 },
-            new sbyte[] {  -92, -69, 0, 69,  92 },
-            new sbyte[] {  -96, -72, 0, 72,  96 },
-            new sbyte[] { -100, -75, 0, 75, 100 },
-            new sbyte[] { -104, -78, 0, 78, 104 },
-            new sbyte[] { -108, -81, 0, 81, 108 },
-            new sbyte[] { -112, -84, 0, 84, 112 },
-            new sbyte[] { -116, -87, 0, 87, 116 },
-            new sbyte[] { -120, -90, 0, 90, 120 },
-            new sbyte[] { -124, -93, 0, 93, 124 }
+        private readonly byte[][] TBL_MUL = new byte[][] {
+            new byte[] { 128, 128, 128, 128, 128 },
+            new byte[] { 124, 125, 128, 131, 132 },
+            new byte[] { 120, 122, 128, 134, 136 },
+            new byte[] { 116, 119, 128, 137, 140 },
+            new byte[] { 112, 116, 128, 140, 144 },
+            new byte[] { 108, 113, 128, 143, 148 },
+            new byte[] { 104, 110, 128, 146, 152 },
+            new byte[] { 100, 107, 128, 149, 156 },
+            new byte[] {  96, 104, 128, 152, 160 },
+            new byte[] {  92, 101, 128, 155, 164 },
+            new byte[] {  88,  98, 128, 158, 168 },
+            new byte[] {  84,  95, 128, 161, 172 },
+            new byte[] {  80,  92, 128, 164, 176 },
+            new byte[] {  76,  89, 128, 167, 180 },
+            new byte[] {  72,  86, 128, 170, 184 },
+            new byte[] {  68,  83, 128, 173, 188 },
+            new byte[] {  64,  80, 128, 176, 192 },
+            new byte[] {  60,  77, 128, 179, 196 },
+            new byte[] {  56,  74, 128, 182, 200 },
+            new byte[] {  52,  71, 128, 185, 204 },
+            new byte[] {  48,  68, 128, 188, 208 },
+            new byte[] {  44,  65, 128, 191, 212 },
+            new byte[] {  40,  62, 128, 194, 216 },
+            new byte[] {  36,  59, 128, 197, 220 },
+            new byte[] {  32,  56, 128, 200, 224 },
+            new byte[] {  28,  53, 128, 203, 228 },
+            new byte[] {  24,  50, 128, 206, 232 },
+            new byte[] {  20,  47, 128, 209, 236 },
+            new byte[] {  16,  44, 128, 212, 240 },
+            new byte[] {  12,  41, 128, 215, 244 },
+            new byte[] {   8,  38, 128, 218, 248 },
+            new byte[] {   4,  35, 128, 221, 252 }
         };
 
         private short m_index = 0;
-        private int m_amp = 0;
-        private int m_u = 0;
-        private int m_v = 0;
-        private int m_w = 0;
+        private byte m_u = 0;
+        private byte m_v = 0;
+        private byte m_w = 0;
 
         private double mTime = 0.0;
         private double mCarrierTime = 0.0;
@@ -118,12 +116,10 @@ namespace VVVF {
             for (int i = 0; i < mWaveBuffer.Length; i += 2) {
                 var carrier = 0.0;
                 {
-                    if (mCarrierTime < 0.25) {
+                    if (mCarrierTime < 0.5) {
                         carrier += mCarrierTime;
-                    } else if (mCarrierTime < 0.75) {
-                        carrier += 0.5 - mCarrierTime;
                     } else {
-                        carrier += mCarrierTime - 1.0;
+                        carrier += 1.0 - mCarrierTime;
                     }
                     mCarrierTime += CarrierFreq / SampleRate;
                     if (1.0 <= mCarrierTime) {
@@ -133,7 +129,7 @@ namespace VVVF {
                     if (1.0 < mTime) {
                         mTime -= 1.0;
                     }
-                    carrier *= 4.0 * 4 * 31;
+                    carrier = carrier * 2.0 * 255;
                     var pwmU = carrier < m_u ? 1 : -1;
                     var pwmV = carrier < m_v ? 1 : -1;
                     var pwmW = carrier < m_w ? 1 : -1;
@@ -162,24 +158,23 @@ namespace VVVF {
                 }
 
                 if (0 == i % 64) {
-                    m_amp = (int)(CurrentPower * 31);
-
                     var iu = m_index >> T_QUANTIZE;
-                    var iv = (m_index + TBL_PHASE_V) >> T_QUANTIZE;
-                    var iw = (m_index + TBL_PHASE_W) >> T_QUANTIZE;
-                    if (TBL_LENGTH <= iv) {
-                        iv -= TBL_LENGTH;
+                    var iv = iu + PHASE_V;
+                    var iw = iu + PHASE_W;
+                    if (WAVE_STEPS <= iv) {
+                        iv -= WAVE_STEPS;
                     }
-                    if (TBL_LENGTH <= iw) {
-                        iw -= TBL_LENGTH;
+                    if (WAVE_STEPS <= iw) {
+                        iw -= WAVE_STEPS;
                     }
-                    m_u = TBL_MUL[m_amp][TBL_DATA[iu]];
-                    m_v = TBL_MUL[m_amp][TBL_DATA[iv]];
-                    m_w = TBL_MUL[m_amp][TBL_DATA[iw]];
+                    var amp = (int)(CurrentPower * 31);
+                    m_u = TBL_MUL[amp][TBL_DATA[iu]];
+                    m_v = TBL_MUL[amp][TBL_DATA[iv]];
+                    m_w = TBL_MUL[amp][TBL_DATA[iw]];
 
-                    m_index += (short)(CurrentFreq * TBL_LENGTH_Q / SampleRate * 32);
-                    if (TBL_LENGTH_Q <= m_index) {
-                        m_index -= TBL_LENGTH_Q;
+                    m_index += (short)(CurrentFreq * COUNTER_LENGTH / SampleRate * 32);
+                    if (COUNTER_LENGTH <= m_index) {
+                        m_index -= COUNTER_LENGTH;
                         if (3 == CurrentMode) {
                             //mCarrierTime = 5 / 16.0;
                         } else {
@@ -276,7 +271,7 @@ namespace VVVF {
         }
 
         void setCarrierFreqIGBT(double signalFreq) {
-            CarrierFreq = 2000;
+            CarrierFreq = 6000;
             CurrentMode = 0;
         }
     }
