@@ -94,7 +94,7 @@
             // trbTargetFreq
             // 
             this.trbTargetFreq.Location = new System.Drawing.Point(6, 45);
-            this.trbTargetFreq.Maximum = 200;
+            this.trbTargetFreq.Maximum = 400;
             this.trbTargetFreq.Name = "trbTargetFreq";
             this.trbTargetFreq.Size = new System.Drawing.Size(320, 45);
             this.trbTargetFreq.TabIndex = 3;
@@ -105,11 +105,12 @@
             // trbAcc
             // 
             this.trbAcc.Location = new System.Drawing.Point(6, 108);
-            this.trbAcc.Maximum = 500;
+            this.trbAcc.Maximum = 1000;
             this.trbAcc.Name = "trbAcc";
             this.trbAcc.Size = new System.Drawing.Size(320, 45);
             this.trbAcc.TabIndex = 4;
-            this.trbAcc.TickFrequency = 10;
+            this.trbAcc.TickFrequency = 25;
+            this.trbAcc.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.trbAcc.Value = 24;
             this.trbAcc.Scroll += new System.EventHandler(this.trbAcc_Scroll);
             // 

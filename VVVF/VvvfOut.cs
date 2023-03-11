@@ -30,51 +30,55 @@ namespace VVVF {
         public double[] ScopeB;
         public double[] ScopeC;
 
-        private const double MIN_POWER = 0.1;
-        private const double FREQ_AT_MAX_POWER = 20.0;
+        private const double MIN_POWER = 0.10;
+        private const double FREQ_AT_MAX_POWER = 100.0;
 
-        private const byte T_QUANTIZE = 11;
-        private const byte WAVE_STEPS = 12;
-        private const short PHASE_V = 4;
-        private const short PHASE_W = 8;
+        private const byte T_QUANTIZE = 9;
+        private const byte WAVE_STEPS = 24;
+        private const short PHASE_V = 8;
+        private const short PHASE_W = 16;
         private const short COUNTER_LENGTH = WAVE_STEPS << T_QUANTIZE;
 
-        private readonly byte[] TBL_DATA = new byte[] {
-            2, 3, 4, 4, 4, 3, 2, 1, 0, 0, 0, 1
+        private readonly byte[] TBL_INDEX = new byte[] {
+            3, 4, 5, 6, 6, 6,
+            6, 6, 6, 6, 5, 4,
+            3, 2, 1, 0, 0, 0,
+            0, 0, 0, 0, 1, 2
         };
-        private readonly byte[][] TBL_MUL = new byte[][] {
-            new byte[] { 128, 128, 128, 128, 128 },
-            new byte[] { 124, 125, 128, 131, 132 },
-            new byte[] { 120, 122, 128, 134, 136 },
-            new byte[] { 116, 119, 128, 137, 140 },
-            new byte[] { 112, 116, 128, 140, 144 },
-            new byte[] { 108, 113, 128, 143, 148 },
-            new byte[] { 104, 110, 128, 146, 152 },
-            new byte[] { 100, 107, 128, 149, 156 },
-            new byte[] {  96, 104, 128, 152, 160 },
-            new byte[] {  92, 101, 128, 155, 164 },
-            new byte[] {  88,  98, 128, 158, 168 },
-            new byte[] {  84,  95, 128, 161, 172 },
-            new byte[] {  80,  92, 128, 164, 176 },
-            new byte[] {  76,  89, 128, 167, 180 },
-            new byte[] {  72,  86, 128, 170, 184 },
-            new byte[] {  68,  83, 128, 173, 188 },
-            new byte[] {  64,  80, 128, 176, 192 },
-            new byte[] {  60,  77, 128, 179, 196 },
-            new byte[] {  56,  74, 128, 182, 200 },
-            new byte[] {  52,  71, 128, 185, 204 },
-            new byte[] {  48,  68, 128, 188, 208 },
-            new byte[] {  44,  65, 128, 191, 212 },
-            new byte[] {  40,  62, 128, 194, 216 },
-            new byte[] {  36,  59, 128, 197, 220 },
-            new byte[] {  32,  56, 128, 200, 224 },
-            new byte[] {  28,  53, 128, 203, 228 },
-            new byte[] {  24,  50, 128, 206, 232 },
-            new byte[] {  20,  47, 128, 209, 236 },
-            new byte[] {  16,  44, 128, 212, 240 },
-            new byte[] {  12,  41, 128, 215, 244 },
-            new byte[] {   8,  38, 128, 218, 248 },
-            new byte[] {   4,  35, 128, 221, 252 }
+        private readonly byte[][] TBL_DATA = new byte[][] {
+            new byte[] { 128, 128, 128, 128, 128, 128, 128 },
+            new byte[] { 123, 124, 126, 128, 130, 132, 133 },
+            new byte[] { 118, 120, 124, 128, 132, 136, 138 },
+            new byte[] { 113, 116, 122, 128, 134, 140, 143 },
+            new byte[] { 108, 112, 120, 128, 136, 144, 148 },
+            new byte[] { 103, 108, 118, 128, 138, 148, 153 },
+            new byte[] {  98, 104, 116, 128, 140, 152, 158 },
+            new byte[] {  93, 100, 114, 128, 142, 156, 163 },
+            new byte[] {  88,  96, 112, 128, 144, 160, 168 },
+            new byte[] {  83,  92, 110, 128, 146, 164, 173 },
+            new byte[] {  78,  88, 108, 128, 148, 168, 178 },
+            new byte[] {  73,  84, 106, 128, 150, 172, 183 },
+            new byte[] {  68,  80, 104, 128, 152, 176, 188 },
+            new byte[] {  63,  76, 102, 128, 154, 180, 193 },
+            new byte[] {  58,  72, 100, 128, 156, 184, 198 },
+            new byte[] {  53,  68,  98, 128, 158, 188, 203 },
+            new byte[] {  48,  64,  96, 128, 160, 192, 208 },
+            new byte[] {  43,  60,  94, 128, 162, 196, 213 },
+            new byte[] {  38,  56,  92, 128, 164, 200, 218 },
+            new byte[] {  33,  52,  90, 128, 166, 204, 223 },
+            new byte[] {  28,  48,  88, 128, 168, 208, 228 },
+            new byte[] {  23,  44,  86, 128, 170, 212, 233 },
+            new byte[] {  18,  40,  84, 128, 172, 216, 238 },
+            new byte[] {  13,  36,  82, 128, 174, 220, 243 },
+            new byte[] {   8,  32,  80, 128, 176, 224, 248 },
+            new byte[] {   3,  28,  78, 128, 178, 228, 253 },
+            new byte[] {   1,  24,  76, 128, 180, 232, 254 },
+            new byte[] {   1,  20,  74, 128, 182, 236, 254 },
+            new byte[] {   1,  16,  72, 128, 184, 240, 254 },
+            new byte[] {   1,  12,  70, 128, 186, 244, 254 },
+            new byte[] {   1,   8,  68, 128, 188, 248, 254 },
+            new byte[] {   1,   4,  66, 128, 190, 252, 254 },
+            new byte[] {   1,   1,  58, 128, 198, 254, 254 }
         };
 
         private short m_index = 0;
@@ -167,18 +171,18 @@ namespace VVVF {
                     if (WAVE_STEPS <= iw) {
                         iw -= WAVE_STEPS;
                     }
-                    var amp = (int)(CurrentPower * 31);
-                    m_u = TBL_MUL[amp][TBL_DATA[iu]];
-                    m_v = TBL_MUL[amp][TBL_DATA[iv]];
-                    m_w = TBL_MUL[amp][TBL_DATA[iw]];
+                    var amp = (short)(CurrentPower * 32);
+                    m_u = TBL_DATA[amp][TBL_INDEX[iu]];
+                    m_v = TBL_DATA[amp][TBL_INDEX[iv]];
+                    m_w = TBL_DATA[amp][TBL_INDEX[iw]];
 
                     m_index += (short)(CurrentFreq * COUNTER_LENGTH / SampleRate * 32);
                     if (COUNTER_LENGTH <= m_index) {
                         m_index -= COUNTER_LENGTH;
                         if (3 == CurrentMode) {
-                            //mCarrierTime = 5 / 16.0;
+                            mCarrierTime = 0.625;
                         } else {
-                            //mCarrierTime = 0.0;
+                            //mCarrierTime = 0.375;
                         }
                     }
                 }
@@ -233,7 +237,7 @@ namespace VVVF {
 
                 if (ScopeA.Length <= mScopeIndex) {
                     var time = mTime - 3.0 / 4.0;
-                    if (EDisplayMode.PHASE == DisplayMode || (0.0 < time && time < 1.0 / 128.0)) {
+                    if (EDisplayMode.PHASE == DisplayMode || (0.0 < time && time < 1.0 / 16.0)) {
                         mScopeIndex = 0;
                     }
                 }
@@ -271,8 +275,16 @@ namespace VVVF {
         }
 
         void setCarrierFreqIGBT(double signalFreq) {
-            CarrierFreq = 6000;
-            CurrentMode = 0;
+            if (signalFreq < 120) {
+                CurrentMode = 0;
+                CarrierFreq = 3000;
+                return;
+            }
+
+            CurrentMode = 3;
+            if (0 < CurrentMode) {
+                CarrierFreq = signalFreq * CurrentMode;
+            }
         }
     }
 }
