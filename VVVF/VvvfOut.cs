@@ -31,13 +31,11 @@ namespace VVVF {
         public double[] ScopeC;
 
         private const double MIN_POWER = 0.10;
-        private const double FREQ_AT_MAX_POWER = 100.0;
+        private const double FREQ_AT_MAX_POWER = 50.0;
 
-        private const byte T_QUANTIZE = 9;
         private const byte WAVE_STEPS = 24;
         private const short PHASE_V = 8;
         private const short PHASE_W = 16;
-        private const short COUNTER_LENGTH = WAVE_STEPS << T_QUANTIZE;
 
         private readonly byte[] TBL_INDEX = new byte[] {
             3, 4, 5, 6, 6, 6,
@@ -77,11 +75,10 @@ namespace VVVF {
             new byte[] {   1,  16,  72, 128, 184, 240, 254 },
             new byte[] {   1,  12,  70, 128, 186, 244, 254 },
             new byte[] {   1,   8,  68, 128, 188, 248, 254 },
-            new byte[] {   1,   4,  66, 128, 190, 252, 254 },
-            new byte[] {   1,   1,  58, 128, 198, 254, 254 }
+            new byte[] {   1,   4,  66, 128, 190, 252, 254 }
         };
 
-        private short m_index = 0;
+        private double m_index = 0.0;
         private byte m_u = 0;
         private byte m_v = 0;
         private byte m_w = 0;
@@ -162,7 +159,7 @@ namespace VVVF {
                 }
 
                 if (0 == i % 64) {
-                    var iu = m_index >> T_QUANTIZE;
+                    var iu = (int)m_index;
                     var iv = iu + PHASE_V;
                     var iw = iu + PHASE_W;
                     if (WAVE_STEPS <= iv) {
@@ -171,14 +168,14 @@ namespace VVVF {
                     if (WAVE_STEPS <= iw) {
                         iw -= WAVE_STEPS;
                     }
-                    var amp = (short)(CurrentPower * 32);
+                    var amp = (short)(CurrentPower * 31);
                     m_u = TBL_DATA[amp][TBL_INDEX[iu]];
                     m_v = TBL_DATA[amp][TBL_INDEX[iv]];
                     m_w = TBL_DATA[amp][TBL_INDEX[iw]];
 
-                    m_index += (short)(CurrentFreq * COUNTER_LENGTH / SampleRate * 32);
-                    if (COUNTER_LENGTH <= m_index) {
-                        m_index -= COUNTER_LENGTH;
+                    m_index += CurrentFreq * WAVE_STEPS / SampleRate * 32;
+                    if (WAVE_STEPS <= m_index) {
+                        m_index -= WAVE_STEPS;
                         if (3 == CurrentMode) {
                             mCarrierTime = 0.625;
                         } else {
@@ -275,9 +272,9 @@ namespace VVVF {
         }
 
         void setCarrierFreqIGBT(double signalFreq) {
-            if (signalFreq < 120) {
+            if (signalFreq < 50) {
                 CurrentMode = 0;
-                CarrierFreq = 3000;
+                CarrierFreq = 6000;
                 return;
             }
 
