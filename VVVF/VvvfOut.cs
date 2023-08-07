@@ -34,14 +34,30 @@ namespace VVVF {
         private const double FREQ_AT_MAX_POWER = 50.0;
 
         private const byte WAVE_STEPS = 24;
-        private const short PHASE_V = 8;
-        private const short PHASE_W = 16;
 
-        private readonly byte[] TBL_INDEX = new byte[] {
-            3, 4, 5, 6, 6, 6,
-            6, 6, 6, 6, 5, 4,
-            3, 2, 1, 0, 0, 0,
-            0, 0, 0, 0, 1, 2
+        private readonly byte[,] TBL_INDEX = new byte[,] {
+            {
+                3, 4, 5, 6,
+                6, 6, 6, 6,
+                6, 6, 5, 4,
+                3, 2, 1, 0,
+                0, 0, 0, 0,
+                0, 0, 1, 2
+            }, {
+                6, 6, 5, 4,
+                3, 2, 1, 0,
+                0, 0, 0, 0,
+                0, 0, 1, 2,
+                3, 4, 5, 6,
+                6, 6, 6, 6
+            }, {
+                0, 0, 0, 0,
+                0, 0, 1, 2,
+                3, 4, 5, 6,
+                6, 6, 6, 6,
+                6, 6, 5, 4,
+                3, 2, 1, 0
+            }
         };
         private readonly byte[][] TBL_DATA = new byte[][] {
             new byte[] { 128, 128, 128, 128, 128, 128, 128 },
@@ -159,19 +175,11 @@ namespace VVVF {
                 }
 
                 if (0 == i % 64) {
-                    var iu = (int)m_index;
-                    var iv = iu + PHASE_V;
-                    var iw = iu + PHASE_W;
-                    if (WAVE_STEPS <= iv) {
-                        iv -= WAVE_STEPS;
-                    }
-                    if (WAVE_STEPS <= iw) {
-                        iw -= WAVE_STEPS;
-                    }
+                    var idx = (int)m_index;
                     var amp = (short)(CurrentPower * 31);
-                    m_u = TBL_DATA[amp][TBL_INDEX[iu]];
-                    m_v = TBL_DATA[amp][TBL_INDEX[iv]];
-                    m_w = TBL_DATA[amp][TBL_INDEX[iw]];
+                    m_u = TBL_DATA[amp][TBL_INDEX[0, idx]];
+                    m_v = TBL_DATA[amp][TBL_INDEX[1, idx]];
+                    m_w = TBL_DATA[amp][TBL_INDEX[2, idx]];
 
                     m_index += CurrentFreq * WAVE_STEPS / SampleRate * 32;
                     if (WAVE_STEPS <= m_index) {
