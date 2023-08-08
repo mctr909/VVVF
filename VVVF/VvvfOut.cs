@@ -86,12 +86,7 @@ namespace VVVF {
             new byte[] {  13,  36,  82, 128, 174, 220, 243 },
             new byte[] {   8,  32,  80, 128, 176, 224, 248 },
             new byte[] {   3,  28,  78, 128, 178, 228, 253 },
-            new byte[] {   1,  24,  76, 128, 180, 232, 254 },
-            new byte[] {   1,  20,  74, 128, 182, 236, 254 },
-            new byte[] {   1,  16,  72, 128, 184, 240, 254 },
-            new byte[] {   1,  12,  70, 128, 186, 244, 254 },
-            new byte[] {   1,   8,  68, 128, 188, 248, 254 },
-            new byte[] {   1,   4,  66, 128, 190, 252, 254 }
+            new byte[] {   1,  24,  76, 128, 180, 232, 254 }
         };
 
         private double m_index = 0.0;
@@ -176,7 +171,7 @@ namespace VVVF {
 
                 if (0 == i % 64) {
                     var idx = (int)m_index;
-                    var amp = (short)(CurrentPower * 31);
+                    var amp = (short)(CurrentPower * 26);
                     m_u = TBL_DATA[amp][TBL_INDEX[0, idx]];
                     m_v = TBL_DATA[amp][TBL_INDEX[1, idx]];
                     m_w = TBL_DATA[amp][TBL_INDEX[2, idx]];
