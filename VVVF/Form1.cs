@@ -8,7 +8,7 @@ namespace VVVF {
             InitializeComponent();
         }
 
-        private const int SCOPE_SPEED = 8;
+        private const int SCOPE_SPEED = 16;
 
         private VvvfOut mWaveOut;
         private DoubleBufferGraphic mWaveGraph;
@@ -72,7 +72,7 @@ namespace VVVF {
         }
 
         private void trbPower_Scroll(object sender, EventArgs e) {
-            mWaveOut.TargetPower = trbPower.Value * 0.01;
+            mWaveOut.TargetAmp = trbPower.Value * 0.01;
             lblPower.Text = string.Format("{0}%", trbPower.Value.ToString("000"));
         }
 
@@ -110,8 +110,8 @@ namespace VVVF {
         }
 
         private void timer1_Tick(object sender, EventArgs e) {
-            lblOutputPower.Text = string.Format("{0}%", (100 * mWaveOut.CurrentPower).ToString("000.0"));
-            lblOutputFreq.Text = string.Format("{0}Hz", mWaveOut.CurrentFreq.ToString("000.0"));
+            lblOutputPower.Text = string.Format("{0}%", (100 * mWaveOut.WaveAmp).ToString("000"));
+            lblOutputFreq.Text = string.Format("{0}Hz", mWaveOut.WaveFreq.ToString("000.0"));
             lblCarrierFreq.Text = string.Format("{0}Hz", mWaveOut.CarrierFreq.ToString("0000.0"));
 
             var graph = mWaveGraph.Graphics;
@@ -119,10 +119,10 @@ namespace VVVF {
             var maxAmp = picWave.Height / 2.0f;
             var neutralLevel = maxAmp - 1.0f;
 
-            if (0 == mWaveOut.CurrentMode) {
+            if (mWaveOut.PulseCount < 0) {
                 lblMode.Text = "非同期";
             } else {
-                lblMode.Text = mWaveOut.CurrentMode.ToString();
+                lblMode.Text = mWaveOut.PulseCount.ToString();
             }
 
             if (VvvfOut.EDisplayMode.PHASE == mWaveOut.DisplayMode) {
